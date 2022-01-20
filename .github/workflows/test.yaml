@@ -22,7 +22,7 @@ jobs:
       run: make test
     - id: coverage
       run: |
-        body=$(make coverage | grep -E -in '[0-9]+.[0-9]+%' -o | tail -1)
+        body="Test Coverage: $(make coverage | grep -E -i '[0-9]+.[0-9]+%' -o | tail -1)"
         echo ::set-output name=body::$body
     - name: Create commit comment
       uses: peter-evans/commit-comment@v1
