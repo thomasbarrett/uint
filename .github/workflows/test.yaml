@@ -7,16 +7,24 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  run:
     runs-on: ubuntu-latest
     steps:
-    - name: checkout repository
+    - name: checkout
       uses: actions/checkout@v2
-    - name: install llvm
+    - name: llvm
       uses: KyleMayes/install-llvm-action@v1
       with:
         version: "10.0"
-    - name: build unit tests
+    - name: build
       run: make build
-    - name: run unit tests
+    - name: test
       run: make test
+    - id: coverage
+      run: |
+        body=$(make coverage | grep -E -in '[0-9]+.[0-9]+%' -o | tail -1)
+        echo ::set-output name=body::$body
+    - name: Create commit comment
+      uses: peter-evans/commit-comment@v1
+      with:
+        body: ${{ steps.coverage.outputs.body }}

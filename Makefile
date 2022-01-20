@@ -31,8 +31,10 @@ bin/test_%: tests/test_%.c $(OBJ_FILES) | bin
 
 .PHONY: test
 test: $(TESTS)
-	echo $(PATH)
 	@for t in $(TESTS); do echo $$t; LLVM_PROFILE_FILE=profile/%p.profraw $$t || exit 1; done
+
+.PHONY: coverage
+coverage:
 	@llvm-profdata merge -sparse profile/*.profraw -o coverage.profdata
 	@llvm-cov report --instr-profile=coverage.profdata -object obj/*.o
 	@rm -rf profile
