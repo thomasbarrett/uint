@@ -4,6 +4,8 @@ SRC_FILES = add sub
 OBJ_FILES = $(addprefix obj/,$(SRC_FILES:=.o))
 TESTS = $(addprefix bin/test_,$(SRC_FILES))
 
+export PATH := $(PATH):$(LLVM_PATH)
+
 .PHONY: all
 all: $(TESTS)
 
@@ -29,10 +31,9 @@ bin/test_%: tests/test_%.c $(OBJ_FILES) | bin
 
 .PHONY: test
 test: $(TESTS)
+	echo $(PATH)
 	@for t in $(TESTS); do echo $$t; LLVM_PROFILE_FILE=profile/%p.profraw $$t || exit 1; done
-	@ls $(LLVM_PATH)
-	@ls $(LLVM_PATH)/bin
-	@$(LLVM_PATH)/bin/llvm-profdata merge -sparse profile/*.profraw -o coverage.profdata
-	@$(LLVM_PATH)/bin/llvm-cov report --instr-profile=coverage.profdata -object obj/*.o
+	@llvm-profdata merge -sparse profile/*.profraw -o coverage.profdata
+	@llvm-cov report --instr-profile=coverage.profdata -object obj/*.o
 	@rm -rf profile
 	@rm coverage.profdata
