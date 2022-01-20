@@ -20,7 +20,8 @@ jobs:
       run: make build
     - name: test
       run: make test
-    - id: coverage
+    - name: coverage
+      id: coverage
       run: |
         body="Test Coverage: $(make coverage | grep -E -i '[0-9]+.[0-9]+%' -o | tail -1)"
         echo ::set-output name=body::$body
