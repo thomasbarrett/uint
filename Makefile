@@ -33,5 +33,7 @@ test: $(TEST_FILES)
 	tests/run.sh $(TEST_FILES)
 
 .PHONY: lint
-lint: 
-	echo "$(TEST_FILES)"
+lint:
+	@for file in $(SRC_FILES); do \
+		clang-tidy $$file --checks=* -- $(CFLAGS); \
+	done
