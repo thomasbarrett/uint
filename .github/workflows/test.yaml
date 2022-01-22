@@ -12,20 +12,7 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v2
-    - name: llvm
-      uses: KyleMayes/install-llvm-action@v1
-      with:
-        version: "10.0"
     - name: build
       run: make build
     - name: test
       run: make test
-    - name: coverage
-      id: coverage
-      run: |
-        body="Test Coverage: $(make coverage | grep -E -i '[0-9]+.[0-9]+%' -o | tail -1)"
-        echo ::set-output name=body::$body
-    - name: Create commit comment
-      uses: peter-evans/commit-comment@v1
-      with:
-        body: ${{ steps.coverage.outputs.body }}

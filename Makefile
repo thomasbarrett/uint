@@ -1,41 +1,37 @@
 CC=clang
-CFLAGS = -std=c11 -Iinclude -fprofile-instr-generate -fcoverage-mapping
-SRC_FILES = add sub
-OBJ_FILES = $(addprefix obj/,$(SRC_FILES:=.o))
-TESTS = $(addprefix bin/test_,$(SRC_FILES))
-
-export PATH := $(PATH):$(LLVM_PATH)
+CFLAGS = -std=c11 -Iinclude -Wall
+SRC_FILES = $(wildcard src/*.c)  $(wildcard src/*/*.c)
+FILES = $(basename $(SRC_FILES:src/%=%))
+OBJ_FILES = $(addprefix obj/,$(FILES:=.o))
+TEST_FILES = $(join $(dir $(addprefix bin/tests/,$(FILES))), $(addprefix test_,$(notdir $(FILES))))
 
 .PHONY: all
 all: $(TESTS)
-
+	
 .PHONY: clean
 clean:
-	rm -rf obj
-	rm -rf bin
-
-obj:
-	mkdir obj
-
-bin:
-	mkdir bin
+	@rm -rf obj
+	@rm -rf bin
 
 .PHONY: build
 build: $(TESTS) $(OBJ_FILES)
 
-obj/%.o: src/%.c | obj
-	$(CC) -c $(CFLAGS) $^ -o $@
+obj/%.o: src/%.c
+	@mkdir -p $(dir $@)
+	@$(CC) -c $(CFLAGS) $^ -o $@
 
-bin/test_%: tests/test_%.c $(OBJ_FILES) | bin
-	$(CC) $(CFLAGS) $^ -o $@
+bin/tests/%: tests/%.c $(OBJ_FILES)
+	@mkdir -p $(dir $@)
+	@$(CC) $(CFLAGS) $^ -o $@
+
+# suppress error for missing test file
+bin/tests/%:
+	@:
 
 .PHONY: test
-test: $(TESTS)
-	@for t in $(TESTS); do echo $$t; LLVM_PROFILE_FILE=profile/%p.profraw $$t || exit 1; done
+test: $(TEST_FILES)
+	tests/run.sh $(TEST_FILES)
 
-.PHONY: coverage
-coverage:
-	@llvm-profdata merge -sparse profile/*.profraw -o coverage.profdata
-	@llvm-cov report --instr-profile=coverage.profdata -object obj/*.o
-	@rm -rf profile
-	@rm coverage.profdata
+.PHONY: lint
+lint: 
+	echo "$(TEST_FILES)"
