@@ -80,3 +80,7 @@ and multiplication instead of division. Since cryptographic algorithms usually
 only need to perform operations in GF(p) for a specific fixed prime p, this
 should be sufficient.
 
+# Optional Extension
+A possible extension that would use this library is an implementation 
+of the Diffie-Hellman key exchange using the Curve25519 group. This is
+the default key exchange protocol in TLS 1.3.
