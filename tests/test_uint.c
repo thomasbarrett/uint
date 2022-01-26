@@ -1,0 +1,55 @@
+#include <assert.h>
+#include <uint.h>
+
+void test_uint_cmp() {
+    big_uint_t a = must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000000");
+    big_uint_t b = must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000000");
+    assert(big_uint_cmp(&a, &b) == 0);
+    assert(big_uint_cmp(&b, &a) == 0);
+
+    a = must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000001");
+    b = must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000000");
+    assert(big_uint_cmp(&a, &b) > 0);
+    assert(big_uint_cmp(&b, &a) < 0);
+
+    a = must_parse_uint("0x1000000000000000000000000000000000000000000000000000000000000000");
+    b = must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000000");
+    assert(big_uint_cmp(&a, &b) > 0);
+    assert(big_uint_cmp(&b, &a) < 0);
+}
+
+void test_uint_add() {
+    big_uint_t a, b, expected, actual;
+    a = must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000000");
+    b = must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000000");
+    expected = must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000000");
+    actual = big_uint_add(&a, &b);
+    assert(big_uint_cmp(&expected, &actual) == 0);
+
+    a = must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000001");
+    b = must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000002");
+    expected = must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000003");
+    actual = big_uint_add(&a, &b);
+    assert(big_uint_cmp(&expected, &actual) == 0);
+}
+
+void test_uint_sub() {
+    big_uint_t a, b, expected, actual;
+    a = must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000000");
+    b = must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000000");
+    expected = must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000000");
+    actual = big_uint_sub(&a, &b);
+    assert(big_uint_cmp(&expected, &actual) == 0);
+
+    a = must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000003");
+    b = must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000002");
+    expected = must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000001");
+    actual = big_uint_sub(&a, &b);
+    assert(big_uint_cmp(&expected, &actual) == 0);
+}
+
+int main(void) {
+    test_uint_cmp();
+    test_uint_add();
+    test_uint_sub();
+}
