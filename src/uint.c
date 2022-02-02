@@ -3,10 +3,12 @@
 #include <assert.h>
 #include <stdio.h>
 
-int big_uint_cmp(const uint_t *a, const uint_t *b, size_t n) {
+#define N_MAX 32
+
+int uint_cmp(const uint_t *a, const uint_t *b, size_t n) {
     int res = 0;
-    for (int i = 0; i < N; i++) {
-        int j = N - 1 - i;
+    for (int i = 0; i < n; i++) {
+        int j = n - 1 - i;
         d_int_t ai = (d_int_t) a[j];
         d_int_t bi = (d_int_t) b[j];
         d_int_t di = ai - bi;
@@ -16,26 +18,50 @@ int big_uint_cmp(const uint_t *a, const uint_t *b, size_t n) {
     return res;
 }
 
-void big_uint_add(const uint_t *a, const uint_t *b, uint_t *c, size_t n) {
+void uint_add(const uint_t *a, const uint_t *b, uint_t *c, size_t n) {
     uint_t carry = 0;
-    for (int i = 0; i < N; i++) {
+    for (int i = 0; i < n; i++) {
         d_uint_t ai = (d_uint_t) a[i];
         d_uint_t bi = (d_uint_t) b[i];
         d_uint_t ci = ai + bi + carry;
         c[i] = (uint_t) ci;
-        carry = (uint_t) (ci >> LIMB_BITS > 0);
+        carry = (uint_t) (ci >> LIMB_BITS);
     }
 }
 
-void big_uint_sub(const uint_t *a, const uint_t *b, uint_t *c, size_t n) {
+void uint_sub(const uint_t *a, const uint_t *b, uint_t *c, size_t n) {
     uint_t borrow = 0;
-    for (int i = 0; i < N; i++) {
+    for (int i = 0; i < n; i++) {
         d_uint_t ai = (d_uint_t) a[i];
         d_uint_t bi = (d_uint_t) b[i];
         d_uint_t ci = ai - bi - borrow;
         c[i] = (uint_t) ci;
         borrow = (ci >> LIMB_BITS > 0);
     }
+}
+
+static void _uint_mul(const uint_t *a, uint_t b, uint_t *c, size_t n) {
+    uint_t carry = 0;
+    for (int i = 0; i < n; i++) {
+        d_uint_t ai = (d_uint_t) a[i];
+        d_uint_t ci = ai * b + carry;
+        c[i] = (uint_t) ci;
+        carry = (uint_t) (ci >> LIMB_BITS);
+    }
+    c[n] = carry;
+}
+
+void uint_mul(const uint_t *a, const uint_t *b, uint_t *c, size_t n) {
+    assert(n <= N_MAX);
+    uint_t res[2 * N_MAX + 2] = {0};
+    uint_t tmp[N_MAX + 2] = {0};
+    for (int i = 0; i < n; i++) {
+        uint_t bi = b[i];
+        memset(tmp, 0, sizeof(tmp));
+        _uint_mul(a, bi, tmp, n);
+        uint_add(res + i, tmp, res + i, n + 2);
+    }
+    memcpy(c, res, 2 * n * sizeof(uint_t));
 }
 
 static int parse_digit(const char *str, uint8_t *digit) {
@@ -87,12 +113,12 @@ static int parse_limb(const char *str, uint_t *limb) {
 
 int parse_uint(const char *str, uint_t *x, size_t n) {
     const char *iter = str;
-    if (strlen(iter) < 2 + N * 2 * sizeof(uint_t)) return -2;
+    if (strlen(iter) < 2 + n * 2 * sizeof(uint_t)) return -2;
     if (iter[0] != '0') return -1;
     if (iter[1] != 'x' && iter[1] != 'X') return -1;
     iter += 2;
-    for (int i = 0; i < N; i++) {
-        int j = N - 1 - i;
+    for (int i = 0; i < n; i++) {
+        int j = n - 1 - i;
         uint_t limb;
         int res = parse_limb(iter, &limb);
         if (res < 0) return res;
@@ -107,7 +133,7 @@ void must_parse_uint(const char *str, uint_t *x, size_t n) {
     assert(err > 0);
 }
 
-void big_uint_print(const uint_t *x, size_t n) {
+void uint_print(const uint_t *x, size_t n) {
     printf("0x");
     for (int i = 0; i < n; i++) {
         int j = n - 1 - i;

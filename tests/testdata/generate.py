@@ -32,7 +32,7 @@ def generate_mul_tests(path, n):
             a = random.randint(0, 2 ** 256)
             b = random.randint(0, 2 ** 256)
             c = (a * b)
-            file.write(f"0x{a:064x} 0x{b:064x} 0x{c:0128x} \n")
+            file.write(f"0x{a:064x} 0x{b:064x} 0x{c:0128x}\n")
 
 def generate_div_tests(path, n):
     with open(path, 'w', encoding='utf-8') as file:

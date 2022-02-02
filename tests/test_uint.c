@@ -19,19 +19,19 @@ void test_uint_cmp() {
     uint_t a[N], b[N];
     must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000000", a, N);
     must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000000", b, N);
-    assert(big_uint_cmp(a, b, N) == 0);
-    assert(big_uint_cmp(b, a, N) == 0);
+    assert(uint_cmp(a, b, N) == 0);
+    assert(uint_cmp(b, a, N) == 0);
 
     must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000001", a, N);
     must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000000", b, N);
-    assert(big_uint_cmp(a, b, N) > 0);
-    assert(big_uint_cmp(b, a, N) < 0);
+    assert(uint_cmp(a, b, N) > 0);
+    assert(uint_cmp(b, a, N) < 0);
 
 
     must_parse_uint("0x1000000000000000000000000000000000000000000000000000000000000000", a, N);
     must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000000", b, N);
-    assert(big_uint_cmp(a, b, N) > 0);
-    assert(big_uint_cmp(b, a, N) < 0);
+    assert(uint_cmp(a, b, N) > 0);
+    assert(uint_cmp(b, a, N) < 0);
 }
 
 void test_uint_add() {
@@ -53,8 +53,8 @@ void test_uint_add() {
         assert(res > 0);
         iter += res + 1; 
 
-        big_uint_add(a, b, actual, N);
-        assert(big_uint_cmp(expected, actual, N) == 0);
+        uint_add(a, b, actual, N);
+        assert(uint_cmp(expected, actual, N) == 0);
     }
 }
 
@@ -77,8 +77,32 @@ void test_uint_sub() {
         assert(res > 0);
         iter += res + 1; 
 
-        big_uint_sub(a, b, actual, N);
-        assert(big_uint_cmp(expected, actual, N) == 0);
+        uint_sub(a, b, actual, N);
+        assert(uint_cmp(expected, actual, N) == 0);
+    }
+}
+
+void test_uint_mul() {
+    char *str = file_read("tests/testdata/mul.txt");
+    char *iter = str;
+    int res;
+    while (*iter != 0) {
+        uint_t a[N], b[N], expected[2 * N], actual[2 * N];
+
+        res = parse_uint(iter, a, N);
+        assert(res > 0);
+        iter += res + 1; 
+
+        res = parse_uint(iter, b, N);
+        assert(res > 0);
+        iter += res + 1; 
+
+        res = parse_uint(iter, expected, 2 * N);
+        assert(res > 0);
+        iter += res + 1; 
+
+        uint_mul(a, b, actual, N);
+        assert(uint_cmp(expected, actual, 2 * N) == 0);
     }
 }
 
@@ -86,4 +110,5 @@ int main(void) {
     test_uint_cmp();
     test_uint_add();
     test_uint_sub();
+    test_uint_mul();
 }
