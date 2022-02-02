@@ -78,25 +78,25 @@ Given two N digit numbers a and b:
 ```
 
 2. Algorithm 2
-- 5 * N^2 + 3 * N
+- 5 * N^2 + 3 * N add
 - N^2 mul
 ```
 Given two N digit numbers a and b:
-    Initialize 2 * N + 1 digit buffer res
-    Initialize 2 * N + 1 digit buffer tmp
+    Initialize 2 * N + 1 digit number res
+    Initialize 2 * N + 1 digit number tmp
     For every digit bi of b
         Set tmp[i:i+N+1] to product of a * bi   (N + 1 add, N mul)
         res += tmp                              (4 * N + 2 add, 0 mul)
 ```
 
 3. Algorithm 3
-- 3 * N^2 + 5 * N
+- 3 * N^2 + 5 * N add
 - N^2 mul
 
 ```
 Given two N digit numbers a and b:
-    Initialize 2 * N + 2 digit buffer res
-    Initialize N + 2 digit buffer tmp
+    Initialize 2 * N + 2 digit number res
+    Initialize N + 2 digit number tmp
     For every digit bi of b
         Set tmp[0:N+1] to product of a * bi    (N + 1 add, N mul)
         res[i:i+N+2] += tmp[0:N+2]             (2 * N + 4 add, 0 mul)
