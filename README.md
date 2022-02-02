@@ -69,24 +69,30 @@ without the use of conditional jumps.
 - N^2 mul
 ```
 Given two N digit numbers a and b:
-    Initialize N digit number acc
+    Declare res[N] = 0
     For every digit ai of a
         For every digit bi of b
-            Initialize N digit number ci
-            Set ci[i+j:i+j+2] to product of ai * bi         (0 add, 1 mul)
-            acc += ci                                       (2 * N add, 0 mul)
+            Declare tmp[N] = 0
+            tmp[i+j:i+j+2] = ai * bi    (0 add, 1 mul)
+            res += tmp                  (2 * N add, 0 mul)
+    Return res
 ```
 
 2. Algorithm 2
 - 5 * N^2 + 3 * N add
 - N^2 mul
 ```
+Assume the existance of N digit by 1 digit multiplication
+that uses N multiplications and N additions and produces an
+N + 1 digit number.
+
 Given two N digit numbers a and b:
-    Initialize 2 * N + 1 digit number res
-    Initialize 2 * N + 1 digit number tmp
+    Declare res[2 * N + 1] = 0
     For every digit bi of b
-        Set tmp[i:i+N+1] to product of a * bi   (N + 1 add, N mul)
-        res += tmp                              (4 * N + 2 add, 0 mul)
+        Declare tmp[2 * N + 1] = 0
+        tmp[i:i+N+1] = a * bi          (N + 1 add, N mul)
+        res += tmp                     (4 * N + 2 add, 0 mul)
+    Return res
 ```
 
 3. Algorithm 3
@@ -95,11 +101,12 @@ Given two N digit numbers a and b:
 
 ```
 Given two N digit numbers a and b:
-    Initialize 2 * N + 2 digit number res
-    Initialize N + 2 digit number tmp
+    Declare res[2 * N + 2] = 0
     For every digit bi of b
-        Set tmp[0:N+1] to product of a * bi    (N + 1 add, N mul)
-        res[i:i+N+2] += tmp[0:N+2]             (2 * N + 4 add, 0 mul)
+        Declare tmp[N + 2] = 0
+        tmp[0:N+1] = a * bi            (N + 1 add, N mul)
+        res[i:i+N+2] += tmp[0:N+2]     (2 * N + 4 add, 0 mul)
+    Return res
 ```
 # Fast Modular Operations
 Modular addition and subtract can all be trivially implemented with an
