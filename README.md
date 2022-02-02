@@ -67,34 +67,40 @@ without the use of conditional jumps.
 1. Algorithm 1
 - 2 * N^3 add
 - N^2 mul
+```
 Given two N digit numbers a and b:
     Initialize N digit number acc
     For every digit ai of a
         For every digit bi of b
             Initialize N digit number ci
-            Set ci\[i+j:i+j+2] to product of ai * bi        (0 add, 1 mul)
+            Set ci[i+j:i+j+2] to product of ai * bi         (0 add, 1 mul)
             acc += ci                                       (2 * N add, 0 mul)
+```
 
 2. Algorithm 2
 - 5 * N^2 + 3 * N
 - N^2 mul
+```
 Given two N digit numbers a and b:
     Initialize 2 * N + 1 digit buffer res
     Initialize 2 * N + 1 digit buffer tmp
     For every digit bi of b
-        Set tmp\[i:i+N+1] to product of a * bi  (N + 1 add, N mul)
+        Set tmp[i:i+N+1] to product of a * bi   (N + 1 add, N mul)
         res += tmp                              (4 * N + 2 add, 0 mul)
+```
 
 3. Algorithm 3
 - 3 * N^2 + 5 * N
 - N^2 mul
+
+```
 Given two N digit numbers a and b:
     Initialize 2 * N + 2 digit buffer res
     Initialize N + 2 digit buffer tmp
     For every digit bi of b
-        Set tmp\[0:N+1] to product of a * bi    (N + 1 add, N mul)
-        res\[i:i+N+2] += tmp\[0:N+2]            (2 * N + 4 add, 0 mul)
-
+        Set tmp[0:N+1] to product of a * bi    (N + 1 add, N mul)
+        res[i:i+N+2] += tmp[0:N+2]             (2 * N + 4 add, 0 mul)
+```
 # Fast Modular Operations
 Modular addition and subtract can all be trivially implemented with an
 addition, subtract, and comparison operator.
