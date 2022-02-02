@@ -38,6 +38,13 @@ int parse_uint(const char *str, big_uint_t *res);
 big_uint_t must_parse_uint(const char *str);
 
 /**
+ * @brief Print a big_uint_t to stdout.
+ * 
+ * @param x the big_uint_t
+ */
+void big_uint_print(big_uint_t x);
+
+/**
  * @brief Compares two uint_t values and returns an integer value indicating
  *        their relative ordering.
  * 

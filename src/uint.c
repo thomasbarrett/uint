@@ -1,6 +1,7 @@
 #include <uint.h>
 #include <string.h>
 #include <assert.h>
+#include <stdio.h>
 
 int big_uint_cmp(const big_uint_t *a, const big_uint_t *b) {
     int res = 0;
@@ -52,11 +53,11 @@ static int parse_digit(const char *str, uint8_t *digit) {
         break;
     case 'a': case 'b': case 'c': case 'd':
     case 'e': case 'f':
-        *digit = c - 'a' + 0x10;
+        *digit = c - 'a' + 10;
         break;
     case 'A': case 'B': case 'C': case 'D':
     case 'E': case 'F':
-        *digit = c - 'A' + 0x10;
+        *digit = c - 'A' + 10;
         break;
     }
     return 1;
@@ -116,6 +117,6 @@ void big_uint_print(big_uint_t x) {
     printf("0x");
     for (int i = 0; i < N; i++) {
         int j = N - 1 - i;
-        printf("%")
+        printf("%08x", x.limbs[j]);
     }
 }
