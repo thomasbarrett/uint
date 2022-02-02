@@ -90,7 +90,7 @@ static int parse_limb(const char *str, uint_t *limb) {
 
 int parse_uint(const char *str, big_uint_t *uint) {
     const char *iter = str;
-    if (strlen(iter) != 2 + N * 2 * sizeof(uint_t)) return -2;
+    if (strlen(iter) < 2 + N * 2 * sizeof(uint_t)) return -2;
     if (iter[0] != '0') return -1;
     if (iter[1] != 'x' && iter[1] != 'X') return -1;
     iter += 2;
@@ -110,4 +110,12 @@ big_uint_t must_parse_uint(const char *str) {
     int err = parse_uint(str, &res);
     assert(err > 0);
     return res;
+}
+
+void big_uint_print(big_uint_t x) {
+    printf("0x");
+    for (int i = 0; i < N; i++) {
+        int j = N - 1 - i;
+        printf("%")
+    }
 }
