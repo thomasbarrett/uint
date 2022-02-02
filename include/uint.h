@@ -2,6 +2,7 @@
 #define UINT_H
 
 #include <stdint.h>
+#include <stddef.h>
 
 #define N 8 // the number of integer limbs in a big_uint
 #define uint_t uint32_t // single precision unsigned integer
@@ -9,14 +10,6 @@
 #define d_uint_t uint64_t // double precision unsigned integer
 
 #define LIMB_BITS (8 * sizeof(uint_t))
-
-/**
- * @brief An arbitrary precision unsigned integer.
- * 
- */
-typedef struct big_uint {
-    uint_t limbs[N];
-} big_uint_t;
 
 /**
  * @brief Parse a big_uint_t into the `res` parameter. Return a value 
@@ -27,7 +20,7 @@ typedef struct big_uint {
  *         -1 in invalid
  *          n if successful (number of characters consumed)
  */
-int parse_uint(const char *str, big_uint_t *res);
+int parse_uint(const char *str, uint_t *res, size_t n);
 
 /**
  * @brief Parse and return a big_uint_t from the given string or exit.
@@ -35,14 +28,14 @@ int parse_uint(const char *str, big_uint_t *res);
  * @param str the string to parse
  * @return the parsed big_uint_t 
  */
-big_uint_t must_parse_uint(const char *str);
+void must_parse_uint(const char *str, uint_t *res, size_t n);
 
 /**
  * @brief Print a big_uint_t to stdout.
  * 
  * @param x the big_uint_t
  */
-void big_uint_print(big_uint_t x);
+void big_uint_print(const uint_t *x, size_t n);
 
 /**
  * @brief Compares two uint_t values and returns an integer value indicating
@@ -54,24 +47,24 @@ void big_uint_print(big_uint_t x);
  *         n = 0 if a == b
  *         n < 0 if a < b.
  */
-int big_uint_cmp(const big_uint_t *a, const big_uint_t *b);
+int big_uint_cmp(const uint_t *a, const uint_t *b, size_t n);
 
 /**
- * @brief Return the sum of two bit_uint_t values.
+ * @brief Assign the param `c` to be the sum of `a` and `b`.
  * 
  * @param a the first uint
  * @param b the second uint
- * @return a + b.
+ * @param c the result `a` + `b`
  */
-big_uint_t big_uint_add(const big_uint_t *a, const big_uint_t *b);
+void big_uint_add(const uint_t *a, const uint_t *b, uint_t *c, size_t n);
 
 /**
- * @brief Return the difference of two bit_uint_t values.
+ * @brief Assign the param `a` to be the difference of `a` and `b`.
  * 
  * @param a the first uint
  * @param b the second uint
- * @return a - b.
+ * @param c the result `a` - `b`
  */
-big_uint_t big_uint_sub(const big_uint_t *a, const big_uint_t *b);
+void big_uint_sub(const uint_t *a, const uint_t *b, uint_t *c, size_t n);
 
 #endif /* UINT_H */

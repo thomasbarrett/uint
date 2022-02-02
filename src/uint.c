@@ -3,12 +3,12 @@
 #include <assert.h>
 #include <stdio.h>
 
-int big_uint_cmp(const big_uint_t *a, const big_uint_t *b) {
+int big_uint_cmp(const uint_t *a, const uint_t *b, size_t n) {
     int res = 0;
     for (int i = 0; i < N; i++) {
         int j = N - 1 - i;
-        d_int_t ai = (d_int_t) a->limbs[j];
-        d_int_t bi = (d_int_t) b->limbs[j];
+        d_int_t ai = (d_int_t) a[j];
+        d_int_t bi = (d_int_t) b[j];
         d_int_t di = ai - bi;
         int si = (int) ((d_int_t) 0 < di) - (int) (di < (d_int_t) 0);
         res += (res == 0) * si;
@@ -16,30 +16,26 @@ int big_uint_cmp(const big_uint_t *a, const big_uint_t *b) {
     return res;
 }
 
-big_uint_t big_uint_add(const big_uint_t *a, const big_uint_t *b) {
-    big_uint_t res;
+void big_uint_add(const uint_t *a, const uint_t *b, uint_t *c, size_t n) {
     uint_t carry = 0;
     for (int i = 0; i < N; i++) {
-        d_uint_t ai = (d_uint_t) a->limbs[i];
-        d_uint_t bi = (d_uint_t) b->limbs[i];
+        d_uint_t ai = (d_uint_t) a[i];
+        d_uint_t bi = (d_uint_t) b[i];
         d_uint_t ci = ai + bi + carry;
-        res.limbs[i] = (uint_t) ci;
+        c[i] = (uint_t) ci;
         carry = (uint_t) (ci >> LIMB_BITS > 0);
     }
-    return res;
 }
 
-big_uint_t big_uint_sub(const big_uint_t *a, const big_uint_t *b) {
-    big_uint_t res;
+void big_uint_sub(const uint_t *a, const uint_t *b, uint_t *c, size_t n) {
     uint_t borrow = 0;
     for (int i = 0; i < N; i++) {
-        d_uint_t ai = (d_uint_t) a->limbs[i];
-        d_uint_t bi = (d_uint_t) b->limbs[i];
+        d_uint_t ai = (d_uint_t) a[i];
+        d_uint_t bi = (d_uint_t) b[i];
         d_uint_t ci = ai - bi - borrow;
-        res.limbs[i] = (uint_t) ci;
+        c[i] = (uint_t) ci;
         borrow = (ci >> LIMB_BITS > 0);
     }
-    return res;
 }
 
 static int parse_digit(const char *str, uint8_t *digit) {
@@ -89,7 +85,7 @@ static int parse_limb(const char *str, uint_t *limb) {
     return iter - str;
 }
 
-int parse_uint(const char *str, big_uint_t *uint) {
+int parse_uint(const char *str, uint_t *x, size_t n) {
     const char *iter = str;
     if (strlen(iter) < 2 + N * 2 * sizeof(uint_t)) return -2;
     if (iter[0] != '0') return -1;
@@ -100,23 +96,21 @@ int parse_uint(const char *str, big_uint_t *uint) {
         uint_t limb;
         int res = parse_limb(iter, &limb);
         if (res < 0) return res;
-        uint->limbs[j] = limb;
+        x[j] = limb;
         iter += 2 * sizeof(uint_t);
     }
     return iter - str;
 }
 
-big_uint_t must_parse_uint(const char *str) {
-    big_uint_t res;
-    int err = parse_uint(str, &res);
+void must_parse_uint(const char *str, uint_t *x, size_t n) {
+    int err = parse_uint(str, x, n);
     assert(err > 0);
-    return res;
 }
 
-void big_uint_print(big_uint_t x) {
+void big_uint_print(const uint_t *x, size_t n) {
     printf("0x");
-    for (int i = 0; i < N; i++) {
-        int j = N - 1 - i;
-        printf("%08x", x.limbs[j]);
+    for (int i = 0; i < n; i++) {
+        int j = n - 1 - i;
+        printf("%08x", x[j]);
     }
 }

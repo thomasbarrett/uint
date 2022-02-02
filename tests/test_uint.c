@@ -16,20 +16,22 @@ char* file_read(char *path) {
 }
 
 void test_uint_cmp() {
-    big_uint_t a = must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000000");
-    big_uint_t b = must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000000");
-    assert(big_uint_cmp(&a, &b) == 0);
-    assert(big_uint_cmp(&b, &a) == 0);
+    uint_t a[N], b[N];
+    must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000000", a, N);
+    must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000000", b, N);
+    assert(big_uint_cmp(a, b, N) == 0);
+    assert(big_uint_cmp(b, a, N) == 0);
 
-    a = must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000001");
-    b = must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000000");
-    assert(big_uint_cmp(&a, &b) > 0);
-    assert(big_uint_cmp(&b, &a) < 0);
+    must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000001", a, N);
+    must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000000", b, N);
+    assert(big_uint_cmp(a, b, N) > 0);
+    assert(big_uint_cmp(b, a, N) < 0);
 
-    a = must_parse_uint("0x1000000000000000000000000000000000000000000000000000000000000000");
-    b = must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000000");
-    assert(big_uint_cmp(&a, &b) > 0);
-    assert(big_uint_cmp(&b, &a) < 0);
+
+    must_parse_uint("0x1000000000000000000000000000000000000000000000000000000000000000", a, N);
+    must_parse_uint("0x0000000000000000000000000000000000000000000000000000000000000000", b, N);
+    assert(big_uint_cmp(a, b, N) > 0);
+    assert(big_uint_cmp(b, a, N) < 0);
 }
 
 void test_uint_add() {
@@ -37,22 +39,22 @@ void test_uint_add() {
     char *iter = str;
     int res;
     while (*iter != 0) {
-        big_uint_t a, b, expected, actual;
+        uint_t a[N], b[N], expected[N], actual[N];
 
-        res = parse_uint(iter, &a);
+        res = parse_uint(iter, a, N);
         assert(res > 0);
         iter += res + 1; 
 
-        res = parse_uint(iter, &b);
+        res = parse_uint(iter, b, N);
         assert(res > 0);
         iter += res + 1; 
 
-        res = parse_uint(iter, &expected);
+        res = parse_uint(iter, expected, N);
         assert(res > 0);
         iter += res + 1; 
 
-        actual = big_uint_add(&a, &b);
-        assert(big_uint_cmp(&expected, &actual) == 0);
+        big_uint_add(a, b, actual, N);
+        assert(big_uint_cmp(expected, actual, N) == 0);
     }
 }
 
@@ -61,22 +63,22 @@ void test_uint_sub() {
     char *iter = str;
     int res;
     while (*iter != 0) {
-        big_uint_t a, b, expected, actual;
+        uint_t a[N], b[N], expected[N], actual[N];
 
-        res = parse_uint(iter, &a);
+        res = parse_uint(iter, a, N);
         assert(res > 0);
         iter += res + 1; 
 
-        res = parse_uint(iter, &b);
+        res = parse_uint(iter, b, N);
         assert(res > 0);
         iter += res + 1; 
 
-        res = parse_uint(iter, &expected);
+        res = parse_uint(iter, expected, N);
         assert(res > 0);
         iter += res + 1; 
 
-        actual = big_uint_sub(&a, &b);
-        assert(big_uint_cmp(&expected, &actual) == 0);
+        big_uint_sub(a, b, actual, N);
+        assert(big_uint_cmp(expected, actual, N) == 0);
     }
 }
 
