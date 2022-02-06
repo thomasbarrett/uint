@@ -106,6 +106,36 @@ void test_uint_mul() {
     }
 }
 
+void test_uint_div() {
+    char *str = file_read("tests/testdata/div.txt");
+    char *iter = str;
+    int res;
+    while (*iter != 0) {
+        uint_t a[N], b[N];
+        uint_t expected_q[N], actual_q[N];
+        uint_t expected_r[N], actual_r[N];
+
+        res = parse_uint(iter, a, N);
+        assert(res > 0);
+        iter += res + 1; 
+
+        res = parse_uint(iter, b, N);
+        assert(res > 0);
+        iter += res + 1; 
+
+        res = parse_uint(iter, expected_q, N);
+        assert(res > 0);
+        iter += res + 1; 
+
+        res = parse_uint(iter, expected_r, N);
+        assert(res > 0);
+        iter += res + 1; 
+
+        uint_div(a, b, actual_q, actual_r, N);
+        assert(uint_cmp(expected_q, actual_q, N) == 0);
+        assert(uint_cmp(expected_r, actual_r, N) == 0);
+    }
+}
 
 void test_uint_shl_one() {
     char *str = file_read("tests/testdata/shl_one.txt");
@@ -202,6 +232,7 @@ int main(void) {
     test_uint_add();
     test_uint_sub();
     test_uint_mul();
+    test_uint_div();
     test_uint_shl_one();
     test_uint_shr_one();
     test_uint_shl_limb();

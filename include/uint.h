@@ -10,6 +10,7 @@
 #define d_uint_t uint64_t // double precision unsigned integer
 
 #define LIMB_BITS (8 * sizeof(uint_t))
+#define LIMB_BITS_LOG2 5
 
 /**
  * @brief Parse a big_uint_t into the `res` parameter. Return a value 
@@ -83,6 +84,18 @@ void uint_sub(const uint_t *a, const uint_t *b, uint_t *c, size_t n);
  * @param n the number of limbs in a and b
  */
 void uint_mul(const uint_t *a, const uint_t *b, uint_t *c, size_t n);
+
+/**
+ * @brief Computes the integer division a / b and assigns the result to the
+ * quotient `q` and remainder `r` parameters.
+ * 
+ * @param a numerator
+ * @param b denominator
+ * @param q quotient
+ * @param r remainer
+ * @param n number of limbs
+ */
+void uint_div(const uint_t *a, const uint_t *b, uint_t *q, uint_t *r, size_t n);
 
 /**
  * @brief Shifts the uint `a` left by `b` limbs and stores the result
