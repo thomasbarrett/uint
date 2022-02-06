@@ -23,16 +23,16 @@ arithmetic operations modulo a prime.
 - mod_inv
 
 # Integer Representation and Precision Restrictions
-The uint library implements arbitrary length integers as arrays of uint64_t,
-where each integer represents a single "digit" in a base 2^64 number system.
-Thus, only integers that are a multiple of 64-bits are supported. This is
-sufficient since most cryptographic algorithms only use numbers that are a
-multiple of 64 (256, 512, 1024, etc).
+The uint library implements arbitrary length integers as arrays of uint32_t,
+where each integer represents a single "digit" in a base 2^32 number system.
+This is effectively a little-endian representation. Thus, only integers that
+are a multiple of 64-bits are supported. This is sufficient since most cryptographic
+algorithms only use numbers that are a multiple of 32 (256, 512, 1024, etc).
 
 For example, the following integer array with be interpreted as 
-a * (2^64)^3 + b * (2^64)^2 + c * (2^64)^1 + d * (2^64)^0
+a * (2^32)^0 + b * (2^32)^1 + c * (2^32)^2 + d * (2^32)^3
 ```c
-uint64_t n = {a, b, c, d};
+uint64_t n[4] = {a, b, c, d};
 ```
 
 # Constant Time Guarentees
@@ -65,8 +65,8 @@ without the use of conditional jumps.
 # Implementation
 ## Multiplication
 1. Algorithm 1
-- 2 * N^3 add
-- N^2 mul
+- addq: 2 * N^3
+- mulq: N^2
 ```
 Given two N digit numbers a and b:
     Declare res[N] = 0
@@ -79,8 +79,8 @@ Given two N digit numbers a and b:
 ```
 
 2. Algorithm 2
-- 5 * N^2 + 3 * N add
-- N^2 mul
+- addq: 5 * N^2 + 3 * N
+- mulq: N^2
 ```
 Assume the existance of N digit by 1 digit multiplication
 that uses N multiplications and N additions and produces an
@@ -96,8 +96,8 @@ Given two N digit numbers a and b:
 ```
 
 3. Algorithm 3
-- 3 * N^2 + 5 * N add
-- N^2 mul
+- addq: 3 * N^2 + 5 * N
+- mulq: N^2
 
 ```
 Given two N digit numbers a and b:

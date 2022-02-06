@@ -35,5 +35,5 @@ test: $(TEST_FILES)
 .PHONY: lint
 lint:
 	@for file in $(SRC_FILES); do \
-		clang-tidy $$file --checks=* -- $(CFLAGS); \
+		clang-tidy $$file --checks=clang-analyzer-*,performance-* -- $(CFLAGS); \
 	done

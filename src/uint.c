@@ -64,6 +64,37 @@ void uint_mul(const uint_t *a, const uint_t *b, uint_t *c, size_t n) {
     memcpy(c, res, 2 * n * sizeof(uint_t));
 }
 
+void uint_shl_word(const uint_t *a, uint_t b, uint_t *c, size_t n) {
+    assert(b <= n);
+    memmove(c + b, a, (n - b) * sizeof(uint_t));
+    memset(c, 0, b * sizeof(uint_t));
+}
+
+static void uint_shl_one(const uint_t *a, uint_t *b, size_t n) {
+    uint_t carry = 0;
+    for (size_t i = 0; i < n; i++) {
+        uint_t ai = a[i];
+        b[i] = (ai << 1) | carry;
+        carry = ai >> (LIMB_BITS - 1U);
+    }
+}
+
+static void uint_shr_word(const uint_t *a, uint_t b, uint_t *c, size_t n) {
+    assert(b <= n);
+    memmove(c, a - b, (n - b) * sizeof(uint_t));
+    memset(c + n - b, 0, b * sizeof(uint_t));
+}
+
+static void uint_shr_one(const uint_t *a, uint_t *b, size_t n) {
+    uint_t carry = 0;
+    for (size_t i = 0; i < n; i++) {
+        size_t j = N - 1 - i;
+        uint_t aj = a[j];
+        b[j] = (aj >> 1) | carry;
+        carry = aj << (LIMB_BITS - 1U);
+    }  
+}
+
 static int parse_digit(const char *str, uint8_t *digit) {
     if (strlen(str) < 1) return -2;
     char c = str[0];
@@ -81,6 +112,8 @@ static int parse_digit(const char *str, uint8_t *digit) {
     case 'E': case 'F':
         *digit = c - 'A' + 10;
         break;
+    default:
+        return -1;
     }
     return 1;
 }
@@ -88,24 +121,26 @@ static int parse_digit(const char *str, uint8_t *digit) {
 static int parse_byte(const char *str, uint8_t *byte) {
     int res;
     uint8_t hi, lo;
-    if (strlen(str) < 2) return -2;
+    const size_t len = 2;
+    if (strnlen(str, len) < len) return -2;
     res = parse_digit(str + 0, &hi);
-    if (res < 1) return res;
+    if (res <= 0) return res;
     res = parse_digit(str + 1, &lo);
-    if (res < 1) return res;
-    *byte = (hi << 4) | lo;
+    if (res <= 0) return res;
+    *byte = (hi << 4U) | lo;
     return 2;
 }
 
 static int parse_limb(const char *str, uint_t *limb) {
     const char *iter = str;
     *limb = 0;
-    if (strlen(iter) < 2 * sizeof(uint_t)) return -2;
+    const size_t len = 2 * sizeof(uint_t);
+    if (strnlen(iter, len) < len) return -2;
     for (int i = 0; i < sizeof(uint_t); i++) {
         uint8_t byte;
         int res = parse_byte(iter, &byte);
-        if (res < 0) return res;
-        *limb = (*limb << 8) | byte;
+        if (res <= 0) return res;
+        *limb = (*limb << 8U) | byte;
         iter += 2;
     }
     return iter - str;
@@ -113,7 +148,9 @@ static int parse_limb(const char *str, uint_t *limb) {
 
 int parse_uint(const char *str, uint_t *x, size_t n) {
     const char *iter = str;
-    if (strlen(iter) < 2 + n * 2 * sizeof(uint_t)) return -2;
+    const size_t len = 2 + n * 2 * sizeof(uint_t);
+
+    if (strnlen(iter, len) < len) return -2;
     if (iter[0] != '0') return -1;
     if (iter[1] != 'x' && iter[1] != 'X') return -1;
     iter += 2;
@@ -121,7 +158,7 @@ int parse_uint(const char *str, uint_t *x, size_t n) {
         int j = n - 1 - i;
         uint_t limb;
         int res = parse_limb(iter, &limb);
-        if (res < 0) return res;
+        if (res <= 0) return res;
         x[j] = limb;
         iter += 2 * sizeof(uint_t);
     }
