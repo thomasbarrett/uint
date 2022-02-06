@@ -64,7 +64,14 @@ without the use of conditional jumps.
 
 # Implementation
 ## Multiplication
-1. Algorithm 1
+For multiplication, we implement the 'schoolbook' long multiplication
+algorithm. Here, we show three possible implementations of the algorithm
+that reduce the number of addq and mulq operations used by optimizing
+away unnecessary operations. Mainly, we can reduce the number of unnecessary
+`addq` operations by minimizing which digits of the intermediate product
+we add to the result. 
+
+1. Implementation 1
 - addq: 2 * N^3
 - mulq: N^2
 ```
@@ -78,7 +85,7 @@ Given two N digit numbers a and b:
     Return res
 ```
 
-2. Algorithm 2
+2. Implementation 2
 - addq: 5 * N^2 + 3 * N
 - mulq: N^2
 ```
@@ -95,7 +102,7 @@ Given two N digit numbers a and b:
     Return res
 ```
 
-3. Algorithm 3
+3. Implementation 3
 - addq: 3 * N^2 + 5 * N
 - mulq: N^2
 
@@ -108,6 +115,27 @@ Given two N digit numbers a and b:
         res[i:i+N+2] += tmp[0:N+2]     (2 * N + 4 add, 0 mul)
     Return res
 ```
+
+## Division
+The division operation is implemented with binary long division. While this
+is not the fastest available division algorithm, it is the easiest that I have
+found that can be easily translated into constant time operations. The pseudocode
+for the binary long division algorithm can be found [here](https://en.wikipedia.org/wiki/Division_algorithm#Long_division).
+
+### Constant Time Bit Access
+In order to implement the binary long divison algorithm above, we need a constant
+time way to access bits. The naiive way to access the `i`th bit of `a` is the following:
+
+```c
+    uint_t wi = i / 32;
+    uint_t bi = i % 32;
+    return (a[wi] >> bi) & 0x1U
+```
+
+This implementation is problematic because the x64 division and modulo instructions are
+not actually constant time. Instead, we can explicitly use the left and right shift
+operators to compute the word and bit indices.
+
 # Fast Modular Operations
 Modular addition and subtract can all be trivially implemented with an
 addition, subtract, and comparison operator.
