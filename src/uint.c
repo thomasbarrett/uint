@@ -64,13 +64,13 @@ void uint_mul(const uint_t *a, const uint_t *b, uint_t *c, size_t n) {
     memcpy(c, res, 2 * n * sizeof(uint_t));
 }
 
-void uint_shl_word(const uint_t *a, uint_t b, uint_t *c, size_t n) {
+void uint_shl_limb(const uint_t *a, uint_t b, uint_t *c, size_t n) {
     assert(b <= n);
     memmove(c + b, a, (n - b) * sizeof(uint_t));
     memset(c, 0, b * sizeof(uint_t));
 }
 
-static void uint_shl_one(const uint_t *a, uint_t *b, size_t n) {
+void uint_shl_one(const uint_t *a, uint_t *b, size_t n) {
     uint_t carry = 0;
     for (size_t i = 0; i < n; i++) {
         uint_t ai = a[i];
@@ -79,13 +79,13 @@ static void uint_shl_one(const uint_t *a, uint_t *b, size_t n) {
     }
 }
 
-static void uint_shr_word(const uint_t *a, uint_t b, uint_t *c, size_t n) {
+void uint_shr_limb(const uint_t *a, uint_t b, uint_t *c, size_t n) {
     assert(b <= n);
-    memmove(c, a - b, (n - b) * sizeof(uint_t));
+    memmove(c, a + b, (n - b) * sizeof(uint_t));
     memset(c + n - b, 0, b * sizeof(uint_t));
 }
 
-static void uint_shr_one(const uint_t *a, uint_t *b, size_t n) {
+void uint_shr_one(const uint_t *a, uint_t *b, size_t n) {
     uint_t carry = 0;
     for (size_t i = 0; i < n; i++) {
         size_t j = N - 1 - i;
@@ -131,7 +131,7 @@ static int parse_byte(const char *str, uint8_t *byte) {
     return 2;
 }
 
-static int parse_limb(const char *str, uint_t *limb) {
+int parse_limb(const char *str, uint_t *limb) {
     const char *iter = str;
     *limb = 0;
     const size_t len = 2 * sizeof(uint_t);

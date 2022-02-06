@@ -84,4 +84,46 @@ void uint_sub(const uint_t *a, const uint_t *b, uint_t *c, size_t n);
  */
 void uint_mul(const uint_t *a, const uint_t *b, uint_t *c, size_t n);
 
+/**
+ * @brief Shifts the uint `a` left by `b` limbs and stores the result
+ * in `c`.
+ * 
+ * @param a input uint
+ * @param b the number of limbs to shift by
+ * @param c output uint
+ * @param n the number of limbs in `a` and `c`.
+ */
+void uint_shl_limb(const uint_t *a, uint_t b, uint_t *c, size_t n);
+
+/**
+ * @brief Shifts the uint `a` left by 1 bit and stores the result
+ * in `c`.
+ * 
+ * @param a input uint
+ * @param b ouput uint
+ * @param n the number of limbs in `a` and `b`.
+ */
+void uint_shl_one(const uint_t *a, uint_t *b, size_t n);
+
+/**
+ * @brief Shifts the uint `a` right by `b` limbs and stores the result
+ * in `c`.
+ * 
+ * @param a input uint
+ * @param b the number of limbs to shift by
+ * @param c output uint
+ * @param n the number of limbs in `a` and `c`.
+ */
+void uint_shr_limb(const uint_t *a, uint_t b, uint_t *c, size_t n);
+
+/**
+ * @brief Shifts the uint `a` right by 1 bit and stores the result
+ * in `c`.
+ * 
+ * @param a input uint
+ * @param b ouput uint
+ * @param n the number of limbs in `a` and `b`.
+ */
+void uint_shr_one(const uint_t *a, uint_t *b, size_t n);
+
 #endif /* UINT_H */

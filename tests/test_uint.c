@@ -106,9 +106,104 @@ void test_uint_mul() {
     }
 }
 
+
+void test_uint_shl_one() {
+    char *str = file_read("tests/testdata/shl_one.txt");
+    char *iter = str;
+    int res;
+    while (*iter != 0) {
+        uint_t a[N], expected[N], actual[N];
+
+        res = parse_uint(iter, a, N);
+        assert(res > 0);
+        iter += res + 1; 
+
+        res = parse_uint(iter, expected, N);
+        assert(res > 0);
+        iter += res + 1; 
+
+        uint_shl_one(a, actual, N);
+        assert(uint_cmp(expected, actual, N) == 0);
+    }
+}
+
+void test_uint_shr_one() {
+    char *str = file_read("tests/testdata/shr_one.txt");
+    char *iter = str;
+    int res;
+    while (*iter != 0) {
+        uint_t a[N], expected[N], actual[N];
+
+        res = parse_uint(iter, a, N);
+        assert(res > 0);
+        iter += res + 1; 
+
+        res = parse_uint(iter, expected, N);
+        assert(res > 0);
+        iter += res + 1; 
+
+        uint_shr_one(a, actual, N);
+        assert(uint_cmp(expected, actual, N) == 0);
+    }
+}
+
+void test_uint_shl_limb() {
+    char *str = file_read("tests/testdata/shl_limb.txt");
+    char *iter = str;
+    int res;
+    while (*iter != 0) {
+        uint_t a[N], expected[N], actual[N];
+        uint_t b;
+
+        res = parse_uint(iter, a, N);
+        assert(res > 0);
+        iter += res + 1; 
+
+        res = parse_uint(iter, &b, 1);
+        assert(res > 0);
+        iter += res + 1; 
+
+        res = parse_uint(iter, expected, N);
+        assert(res > 0);
+        iter += res + 1; 
+
+        uint_shl_limb(a, b, actual, N);
+        assert(uint_cmp(expected, actual, N) == 0);
+    }
+}
+
+void test_uint_shr_limb() {
+    char *str = file_read("tests/testdata/shr_limb.txt");
+    char *iter = str;
+    int res;
+    while (*iter != 0) {
+        uint_t a[N], expected[N], actual[N];
+        uint_t b;
+
+        res = parse_uint(iter, a, N);
+        assert(res > 0);
+        iter += res + 1; 
+
+        res = parse_uint(iter, &b, 1);
+        assert(res > 0);
+        iter += res + 1; 
+
+        res = parse_uint(iter, expected, N);
+        assert(res > 0);
+        iter += res + 1; 
+
+        uint_shr_limb(a, b, actual, N);
+        assert(uint_cmp(expected, actual, N) == 0);
+    }
+}
+
 int main(void) {
     test_uint_cmp();
     test_uint_add();
     test_uint_sub();
     test_uint_mul();
+    test_uint_shl_one();
+    test_uint_shr_one();
+    test_uint_shl_limb();
+    test_uint_shr_limb();
 }
