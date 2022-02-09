@@ -130,8 +130,9 @@ void uint_shr_one(const uint_t *a, uint_t *b, size_t n) {
 }
 
 void uint_select(const uint_t *a, uint_t b, uint_t *c, size_t n) {
+    uint_t mask = ~(b - 1);
     for (size_t i = 0; i < n; i++) {
-        c[i] = b * a[i];
+        c[i] = mask & a[i];
     }
 }
 

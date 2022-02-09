@@ -122,6 +122,41 @@ is not the fastest available division algorithm, it is the easiest that I have
 found that can be easily translated into constant time operations. The pseudocode
 for the binary long division algorithm can be found [here](https://en.wikipedia.org/wiki/Division_algorithm#Long_division).
 
+Assuming a W-bit word size, this operation uses:
+- W * 2 * N^2 + W * N subq
+- W * N^2 shl
+- W * N^2 shr
+- W * N not
+- W * N^2 or
+- W * N^2 and
+For a W=32, this is likely much slower than multiplication, but a benchmark
+is needed.
+
+### Constant Time Value Selection
+There is a conditional subtraction in the binary division operation. This
+is not constant time:
+```
+if R >= D then
+    R := R − D
+    Q(i) := 1
+end
+```
+This can be modified to the better constant time construct. Explanation of
+the strange construct can be found [here](https://crypto.stackexchange.com/questions/96614/how-can-i-understand-whether-my-c-implementation-is-constant-time-or-not-i-e-r)
+```
+B = R >= D
+R := R - (~(B - 1) & D)
+Q(i) := B
+```
+Note that one may be tempted to write the following using a condition move instruction. This is not constant time since the D and ZERO variables are
+stored in different locations in memory (and thus will be accessed on different cache lines). This opens up the algorithm to a cache-timing attack
+vulnerability.
+```
+ZERO := 0
+B = R >= D
+R := R - (B ? D: ZERO)
+Q(i) := B
+```
 ### Constant Time Bit Access
 In order to implement the binary long divison algorithm above, we need a constant
 time way to access bits. The naiive way to access the `i`th bit of `a` is the following:
@@ -153,6 +188,46 @@ to be precomputed so that a modulo operation can be implemented with addition
 and multiplication instead of division. Since cryptographic algorithms usually
 only need to perform operations in GF(p) for a specific fixed prime p, this
 should be sufficient.
+
+## Addition
+Modular addition can be implemented simply and efficiently:
+```
+Given two N digit numbers a and b and prime q:
+    c := a + b
+    if c >= q:
+        c -= q
+    return c
+```
+However, this is not constant time since we use a branch conditional
+on the input data. Luckily, this is not to difficulty to solve.
+```
+Given two N digit numbers a and b and prime q:
+    c := a + b
+    d := c >= q
+    c -= d * q
+    return c
+```
+
+## Subtraction
+Subtraction can be implemented using a similar idea.
+```
+Given two N digit numbers a and b and prime q:
+    d := a < b
+    b += d * q
+    return a - b
+```
+
+## Multiplication
+Since the result of multiplication is far larger than `p`, we implement
+modular multiplication using the following algorithm. Since big integer
+division is used, this operation is slower than big integer division.
+```
+Given two N digit numbers a and b and prime q:
+    declare q[N], r[N]
+    c[2 * N] = a * b
+    (q[N], r[N]) = (c / q, c % q) 
+    return r
+```
 
 # Optional Extension
 A possible extension that would use this library is an implementation 
