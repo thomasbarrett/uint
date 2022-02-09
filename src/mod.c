@@ -64,3 +64,11 @@ void mod_pow(const uint_t *p, const uint_t *a, const uint_t *b, uint_t *c, size_
     }
     memcpy(c, res, n * sizeof(uint_t));
 }
+
+void mod_inv(const uint_t *p, const uint_t *a, uint_t *b, size_t n) {
+    uint_t one[N_MAX] = {0};
+    one[0] = 1U;
+    uint_t pow[N_MAX];
+    uint_sub(p, one, pow, n);
+    mod_pow(p, a, pow, b, n);
+}

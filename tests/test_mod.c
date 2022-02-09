@@ -129,9 +129,34 @@ void test_mod_pow() {
     }
 }
 
+void test_mod_inv() {
+    char *str = file_read("tests/testdata/pow_inv.txt");
+    char *iter = str;
+    int res;
+    while (*iter != 0) {
+        uint_t p[N], a[N], expected[N], actual[N];
+        
+        res = parse_uint(iter, p, N);
+        assert(res > 0);
+        iter += res + 1; 
+
+        res = parse_uint(iter, a, N);
+        assert(res > 0);
+        iter += res + 1; 
+
+        res = parse_uint(iter, expected, N);
+        assert(res > 0);
+        iter += res + 1; 
+
+        mod_inv(p, a, actual, N);
+        assert(uint_cmp(expected, actual, N) == 0);
+    }
+}
+
 int main(void) {
     test_mod_add();
     test_mod_sub();
     test_mod_mul();
     test_mod_pow();
+    test_mod_inv();
 }

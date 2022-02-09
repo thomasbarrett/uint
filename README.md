@@ -212,12 +212,23 @@ Since the result of multiplication is far larger than `p`, we implement
 modular multiplication using the following algorithm. Since big integer
 division is used, this operation is slower than big integer division.
 ```
-Given two N digit numbers a and b and prime q:
+Given two N digit numbers a and b and prime p:
     declare q[N], r[N]
     c[2 * N] = a * b
-    (q[N], r[N]) = (c / q, c % q) 
+    (q[N], r[N]) = (c / p, c % p) 
     return r
 ```
+
+## Exponentiation
+We implement modular multiplication use exponentiation by squaring. 
+Discussion of this technique can be found [here](https://en.wikipedia.org/wiki/Exponentiation_by_squaring#Montgomery's_ladder_technique)
+
+## Inversion
+We use the exponentiation operation to implement the modular inversion.
+For any N digit number a and prime p, the inverse of `a` is `a^(p - 1)`.
+This is a basic fact from algebra. This is a pretty slow operation... it
+may be possible to make faster using a constant-time variant of the gcd
+algorithm, such as the one found [here](https://gcd.cr.yp.to/safegcd-20190413.pdf)
 
 # Optional Extension
 A possible extension that would use this library is an implementation 
