@@ -90,7 +90,7 @@ void uint_div(const uint_t *a, const uint_t *b, uint_t *q, uint_t *r, size_t n) 
         size_t j = bits - 1 - i;
         r1[0] |= uint_get_bit(a, j, n);
         uint_t d = uint_cmp(r1, b, n) >= 0;
-        uint_select(b, d, c, n);
+        uint_select_zero(b, d, c, n);
         uint_sub(r1, c, r1, n);
         uint_set_bit(q1, j, d, n);
     }
@@ -131,11 +131,19 @@ void uint_shr_one(const uint_t *a, uint_t *b, size_t n) {
     }  
 }
 
-void uint_select(const uint_t *a, uint_t b, uint_t *c, size_t n) {
+void uint_select_zero(const uint_t *a, uint_t b, uint_t *c, size_t n) {
     uint_t mask = ~(b - 1);
     for (size_t i = 0; i < n; i++) {
         c[i] = mask & a[i];
     }
+}
+
+void uint_select_one(const uint_t *a, uint_t b, uint_t *c, size_t n) {
+    uint_t mask = ~(b - 1);
+    for (size_t i = 0; i < n; i++) {
+        c[i] = mask & a[i];
+    }
+    c[0] |= (b - 1) & 1U;
 }
 
 static int parse_digit(const char *str, uint8_t *digit) {

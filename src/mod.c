@@ -55,11 +55,11 @@ void mod_pow(const uint_t *p, const uint_t *a, const uint_t *b, uint_t *c, size_
     memcpy(a_2b, a, n * sizeof(uint_t));
     uint_t res[N_MAX] = {0};
     res[0] = 1;
-    uint_t one[N_MAX] = {0};
-    one[0] = 1;
+    uint_t tmp[N_MAX];
     for (size_t i = 0; i < bits; i++) {
         uint_t bit = uint_get_bit(b, i, n);
-        mod_mul(p, res, bit ? a_2b: one, res, n);
+        uint_select_one(a_2b, bit, tmp, n);
+        mod_mul(p, res, tmp, res, n);
         mod_mul(p, a_2b, a_2b, a_2b, n);
     }
     memcpy(c, res, n * sizeof(uint_t));

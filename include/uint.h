@@ -149,9 +149,37 @@ void uint_shr_one(const uint_t *a, uint_t *b, size_t n);
  * @param c output uint
  * @param n the number of limbs
  */
-void uint_select(const uint_t *a, uint_t b, uint_t *c, size_t n);
+void uint_select_zero(const uint_t *a, uint_t b, uint_t *c, size_t n);
 
+/**
+ * @brief Sets the integer `c` equal to `a` or 1 depending on the
+ *        value of b.  
+ * 
+ * @param a input uint
+ * @param b a boolean value 1 or 0
+ * @param c output uint
+ * @param n the number of limbs
+ */
+void uint_select_one(const uint_t *a, uint_t b, uint_t *c, size_t n);
+
+/**
+ * @brief Returns the ith bit of x.
+ * 
+ * @param x the uint to modify
+ * @param i the bit index
+ * @param b the bit value
+ * @param n the number of limbs
+ */
 uint_t uint_get_bit(const uint_t *x, uint_t i, size_t n);
+
+/**
+ * @brief Sets the ith bit of x to b.
+ * 
+ * @param x the uint to modify
+ * @param i the bit index
+ * @param b the bit value
+ * @param n the number of limbs
+ */
 void uint_set_bit(uint_t *x, uint_t i, uint_t b, size_t n);
 
 #endif /* UINT_H */
