@@ -122,16 +122,6 @@ is not the fastest available division algorithm, it is the easiest that I have
 found that can be easily translated into constant time operations. The pseudocode
 for the binary long division algorithm can be found [here](https://en.wikipedia.org/wiki/Division_algorithm#Long_division).
 
-Assuming a W-bit word size, this operation uses:
-- W * 2 * N^2 + W * N subq
-- W * N^2 shl
-- W * N^2 shr
-- W * N not
-- W * N^2 or
-- W * N^2 and
-For a W=32, this is likely much slower than multiplication, but a benchmark
-is needed.
-
 ### Constant Time Value Selection
 There is a conditional subtraction in the binary division operation. This
 is not constant time:
@@ -204,7 +194,7 @@ on the input data. Luckily, this is not to difficulty to solve.
 Given two N digit numbers a and b and prime q:
     c := a + b
     d := c >= q
-    c -= d * q
+    c -= ~(d - 1) & q
     return c
 ```
 
@@ -213,7 +203,7 @@ Subtraction can be implemented using a similar idea.
 ```
 Given two N digit numbers a and b and prime q:
     d := a < b
-    b += d * q
+    b += ~(d - 1) & q
     return a - b
 ```
 

@@ -106,10 +106,11 @@ void uint_shl_limb(const uint_t *a, uint_t b, uint_t *c, size_t n) {
 
 void uint_shl_one(const uint_t *a, uint_t *b, size_t n) {
     uint_t carry = 0;
+    const uint_t LIMB_BITS_MINUS_1 = LIMB_BITS - 1;
     for (size_t i = 0; i < n; i++) {
         uint_t ai = a[i];
         b[i] = (ai << 1) | carry;
-        carry = ai >> (LIMB_BITS - 1U);
+        carry = ai >> (LIMB_BITS_MINUS_1);
     }
 }
 
@@ -121,11 +122,12 @@ void uint_shr_limb(const uint_t *a, uint_t b, uint_t *c, size_t n) {
 
 void uint_shr_one(const uint_t *a, uint_t *b, size_t n) {
     uint_t carry = 0;
+    const uint_t LIMB_BITS_MINUS_1 = LIMB_BITS - 1;
     for (size_t i = 0; i < n; i++) {
         size_t j = N - 1 - i;
         uint_t aj = a[j];
         b[j] = (aj >> 1) | carry;
-        carry = aj << (LIMB_BITS - 1U);
+        carry = aj << (LIMB_BITS_MINUS_1);
     }  
 }
 
