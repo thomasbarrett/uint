@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#define N_MAX 32
 #define N 8 // the number of integer limbs in a big_uint
 #define uint_t uint32_t // single precision unsigned integer
 #define d_int_t int64_t // double precision signed integer
@@ -138,5 +139,19 @@ void uint_shr_limb(const uint_t *a, uint_t b, uint_t *c, size_t n);
  * @param n the number of limbs in `a` and `b`.
  */
 void uint_shr_one(const uint_t *a, uint_t *b, size_t n);
+
+/**
+ * @brief Sets the integer `c` equal to `a` or 0 depending on the
+ *        value of b.  
+ * 
+ * @param a input uint
+ * @param b a boolean value 1 or 0
+ * @param c output uint
+ * @param n the number of limbs
+ */
+void uint_select(const uint_t *a, uint_t b, uint_t *c, size_t n);
+
+uint_t uint_get_bit(const uint_t *x, uint_t i, size_t n);
+void uint_set_bit(uint_t *x, uint_t i, uint_t b, size_t n);
 
 #endif /* UINT_H */

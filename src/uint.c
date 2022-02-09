@@ -3,8 +3,6 @@
 #include <assert.h>
 #include <stdio.h>
 
-#define N_MAX 32
-
 static const uint_t ZERO[N_MAX] = {0};
 
 int uint_cmp(const uint_t *a, const uint_t *b, size_t n) {
@@ -66,14 +64,14 @@ void uint_mul(const uint_t *a, const uint_t *b, uint_t *c, size_t n) {
     memcpy(c, res, 2 * n * sizeof(uint_t));
 }
 
-static uint_t uint_get_bit(const uint_t *x, uint_t i, size_t n) {
+uint_t uint_get_bit(const uint_t *x, uint_t i, size_t n) {
     uint_t q = i >> LIMB_BITS_LOG2;         // b / LIMB_BITS
     uint_t r = i - (q << LIMB_BITS_LOG2);   // b % LIMB_BITS
     assert(q < n);
     return (x[q] >> r) & 1U;
 }
 
-static void uint_set_bit(uint_t *x, uint_t i, uint_t b, size_t n) {
+void uint_set_bit(uint_t *x, uint_t i, uint_t b, size_t n) {
     uint_t q = i >> LIMB_BITS_LOG2;         // b / LIMB_BITS
     uint_t r = i - (q << LIMB_BITS_LOG2);   // b % LIMB_BITS
     assert(q < n);
@@ -85,13 +83,15 @@ void uint_div(const uint_t *a, const uint_t *b, uint_t *q, uint_t *r, size_t n) 
     assert(uint_cmp(b, ZERO, n) > 0);
     uint_t q1[N_MAX] = {0};
     uint_t r1[N_MAX] = {0};
+    uint_t c[N_MAX];
     const size_t bits = n * LIMB_BITS;
     for (size_t i = 0; i < bits; i++) {
         uint_shl_one(r1, r1, n);
         size_t j = bits - 1 - i;
         r1[0] |= uint_get_bit(a, j, n);
         uint_t d = uint_cmp(r1, b, n) >= 0;
-        uint_sub(r1, d ? b: ZERO, r1, n);
+        uint_select(b, d, c, n);
+        uint_sub(r1, c, r1, n);
         uint_set_bit(q1, j, d, n);
     }
     memcpy(q, q1, n * sizeof(uint_t));
@@ -127,6 +127,12 @@ void uint_shr_one(const uint_t *a, uint_t *b, size_t n) {
         b[j] = (aj >> 1) | carry;
         carry = aj << (LIMB_BITS - 1U);
     }  
+}
+
+void uint_select(const uint_t *a, uint_t b, uint_t *c, size_t n) {
+    for (size_t i = 0; i < n; i++) {
+        c[i] = b * a[i];
+    }
 }
 
 static int parse_digit(const char *str, uint8_t *digit) {
