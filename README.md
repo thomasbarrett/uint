@@ -234,3 +234,18 @@ algorithm, such as the one found [here](https://gcd.cr.yp.to/safegcd-20190413.pd
 A possible extension that would use this library is an implementation 
 of the Diffie-Hellman key exchange using the Curve25519 group. This is
 the default key exchange protocol in TLS 1.3.
+
+# Benchmark:
+The benchmark results before optimization.
+```
+run_uint_cmp: 19150804
+run_uint_add: 25506648
+run_uint_sub: 21707278
+run_uint_mul: 1511724
+run_uint_div: 26801
+run_mod_add: 3765058
+run_mod_sub: 3807269
+run_mod_mul: 7245
+run_mod_pow: 14
+run_mod_inv: 14
+```

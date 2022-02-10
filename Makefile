@@ -24,6 +24,10 @@ bin/tests/%: tests/%.c $(OBJ_FILES)
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) $^ -o $@
 
+bin/benchmark: benchmark/main.c $(OBJ_FILES)
+	@mkdir -p $(dir $@)
+	@$(CC) $(CFLAGS) $^ -o $@
+
 # suppress error for missing test file
 bin/tests/%:
 	@:
@@ -37,3 +41,7 @@ lint:
 	@for file in $(SRC_FILES); do \
 		clang-tidy $$file --checks=clang-analyzer-*,performance-* -- $(CFLAGS); \
 	done
+
+.PHONY: benchmark
+benchmark: bin/benchmark
+	./bin/benchmark
