@@ -1,12 +1,12 @@
 #include <time.h>
 #include <uint.h>
-#include <mod.h>
+#include <gfp.h>
 #include <stdio.h>
 
 #define STRINGIFY(x) #x
 #define BENCHMARK(func, batch) benchmark(STRINGIFY(func), func, batch)
 
-uint_t q[N], a1[N], a2[N], a3[2 * N], a4[2 * N];
+uint_t q[2 * N], a1[2 * N], a2[2 * N], a3[2 * N], a4[2 * N];
 
 void benchmark(const char *name, void (*func)(void), size_t batch) {
     time_t start = clock();
@@ -43,24 +43,24 @@ void run_uint_div(void) {
     uint_div(a1, a2, a3, a4, N);
 }
 
-void run_mod_add(void) {
-    mod_add(q, a1, a2, a3, N);
+void run_gfp_add(void) {
+    gfp_add(q, a1, a2, a3, N);
 }
 
-void run_mod_sub(void) {
-    mod_sub(q, a1, a2, a3, N);
+void run_gfp_sub(void) {
+    gfp_sub(q, a1, a2, a3, N);
 }
 
-void run_mod_mul(void) {
-    mod_mul(q, a1, a2, a3, N);
+void run_gfp_mul(void) {
+    gfp_mul(q, a1, a2, a3, N);
 }
 
-void run_mod_pow(void) {
-    mod_pow(q, a1, a2, a3, N);
+void run_gfp_pow(void) {
+    gfp_pow(q, a1, a2, a3, N);
 }
 
-void run_mod_inv(void) {
-    mod_inv(q, a1, a2, N);
+void run_gfp_inv(void) {
+    gfp_inv(q, a1, a2, N);
 }
 
 int main(void) {
@@ -72,9 +72,9 @@ int main(void) {
     BENCHMARK(run_uint_sub, 100);
     BENCHMARK(run_uint_mul, 100);
     BENCHMARK(run_uint_div, 100);
-    BENCHMARK(run_mod_add, 100);
-    BENCHMARK(run_mod_sub, 100);
-    BENCHMARK(run_mod_mul, 100);
-    BENCHMARK(run_mod_pow, 1);
-    BENCHMARK(run_mod_inv, 1);
+    BENCHMARK(run_gfp_add, 100);
+    BENCHMARK(run_gfp_sub, 100);
+    BENCHMARK(run_gfp_mul, 100);
+    BENCHMARK(run_gfp_pow, 1);
+    BENCHMARK(run_gfp_inv, 1);
 }

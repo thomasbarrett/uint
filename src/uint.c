@@ -6,31 +6,32 @@
 static const uint_t ZERO[N_MAX] = {0};
 
 int uint_cmp(const uint_t *a, const uint_t *b, size_t n) {
-    int res = 0;
-    for (int i = 0; i < n; i++) {
-        int j = n - 1 - i;
+    d_int_t res = 0;
+    size_t j = n - 1;
+    for (size_t i = 0; i < n; i++) {
         d_int_t ai = (d_int_t) a[j];
         d_int_t bi = (d_int_t) b[j];
         d_int_t di = ai - bi;
-        int si = (int) ((d_int_t) 0 < di) - (int) (di < (d_int_t) 0);
-        res += (res == 0) * si;
+        d_int_t si = ((d_int_t) 0 < di) - (di < (d_int_t) 0);
+        res |= (res == 0) * si;
+        j--;
     }
-    return res;
+    return (int) res;
 }
 
 void uint_add(const uint_t *a, const uint_t *b, uint_t *c, size_t n) {
-    uint_t carry = 0;
+    d_uint_t carry = 0;
     for (int i = 0; i < n; i++) {
         d_uint_t ai = (d_uint_t) a[i];
         d_uint_t bi = (d_uint_t) b[i];
         d_uint_t ci = ai + bi + carry;
         c[i] = (uint_t) ci;
-        carry = (uint_t) (ci >> LIMB_BITS);
+        carry = ci >> LIMB_BITS;
     }
 }
 
 void uint_sub(const uint_t *a, const uint_t *b, uint_t *c, size_t n) {
-    uint_t borrow = 0;
+    d_uint_t borrow = 0;
     for (int i = 0; i < n; i++) {
         d_uint_t ai = (d_uint_t) a[i];
         d_uint_t bi = (d_uint_t) b[i];
@@ -124,7 +125,7 @@ void uint_shr_one(const uint_t *a, uint_t *b, size_t n) {
     uint_t carry = 0;
     const uint_t LIMB_BITS_MINUS_1 = LIMB_BITS - 1;
     for (size_t i = 0; i < n; i++) {
-        size_t j = N - 1 - i;
+        size_t j = n - 1 - i;
         uint_t aj = a[j];
         b[j] = (aj >> 1) | carry;
         carry = aj << (LIMB_BITS_MINUS_1);
@@ -225,6 +226,6 @@ void uint_print(const uint_t *x, size_t n) {
     printf("0x");
     for (int i = 0; i < n; i++) {
         int j = n - 1 - i;
-        printf("%08x", x[j]);
+        printf("%0.*x", (int) (2 * sizeof(uint_t)), x[j]);
     }
 }

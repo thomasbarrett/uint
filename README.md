@@ -249,3 +249,16 @@ run_mod_mul: 7245
 run_mod_pow: 14
 run_mod_inv: 14
 ```
+
+```
+run_uint_cmp: 61122077
+run_uint_add: 85986328
+run_uint_sub: 76625023
+run_uint_mul: 8760286
+run_uint_div: 157737
+run_gfp_add: 25711248 // 6.8x faster
+run_gfp_sub: 27008372 // 7.1x faster
+run_gfp_mul: 45468 // 6.2x faster
+run_gfp_pow: 82
+run_gfp_inv: 79
+```

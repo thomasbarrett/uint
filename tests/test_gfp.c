@@ -1,5 +1,5 @@
 #include <assert.h>
-#include <mod.h>
+#include <gfp.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -15,12 +15,16 @@ char* file_read(char *path) {
     return str;
 }
 
-void test_mod_add() {
+void test_gfp_add() {
     char *str = file_read("tests/testdata/add_mod.txt");
     char *iter = str;
     int res;
     while (*iter != 0) {
-        uint_t p[N], a[N], b[N], expected[N], actual[N];
+        uint_t p[2 * N] = {0};
+        uint_t a[2 * N] = {0};
+        uint_t b[2 * N] = {0};
+        uint_t expected[2 * N] = {0};
+        uint_t actual[2 * N] = {0};
         
         res = parse_uint(iter, p, N);
         assert(res > 0);
@@ -38,18 +42,22 @@ void test_mod_add() {
         assert(res > 0);
         iter += res + 1; 
 
-        mod_add(p, a, b, actual, N);
+        gfp_add(p, a, b, actual, N);
         assert(uint_cmp(expected, actual, N) == 0);
     }
 }
 
 
-void test_mod_sub() {
+void test_gfp_sub() {
     char *str = file_read("tests/testdata/sub_mod.txt");
     char *iter = str;
     int res;
     while (*iter != 0) {
-        uint_t p[N], a[N], b[N], expected[N], actual[N];
+        uint_t p[2 * N] = {0};
+        uint_t a[2 * N] = {0};
+        uint_t b[2 * N] = {0};
+        uint_t expected[2 * N] = {0};
+        uint_t actual[2 * N] = {0};
         
         res = parse_uint(iter, p, N);
         assert(res > 0);
@@ -67,18 +75,22 @@ void test_mod_sub() {
         assert(res > 0);
         iter += res + 1; 
 
-        mod_sub(p, a, b, actual, N);
+        gfp_sub(p, a, b, actual, N);
         assert(uint_cmp(expected, actual, N) == 0);
     }
 }
 
 
-void test_mod_mul() {
+void test_gfp_mul() {
     char *str = file_read("tests/testdata/mul_mod.txt");
     char *iter = str;
     int res;
     while (*iter != 0) {
-        uint_t p[N], a[N], b[N], expected[N], actual[N];
+        uint_t p[2 * N] = {0};
+        uint_t a[2 * N] = {0};
+        uint_t b[2 * N] = {0};
+        uint_t expected[2 * N] = {0};
+        uint_t actual[2 * N] = {0};
         
         res = parse_uint(iter, p, N);
         assert(res > 0);
@@ -96,17 +108,21 @@ void test_mod_mul() {
         assert(res > 0);
         iter += res + 1; 
 
-        mod_mul(p, a, b, actual, N);
+        gfp_mul(p, a, b, actual, N);
         assert(uint_cmp(expected, actual, N) == 0);
     }
 }
 
-void test_mod_pow() {
+void test_gfp_pow() {
     char *str = file_read("tests/testdata/pow_mod.txt");
     char *iter = str;
     int res;
     while (*iter != 0) {
-        uint_t p[N], a[N], b[N], expected[N], actual[N];
+        uint_t p[2 * N] = {0};
+        uint_t a[2 * N] = {0};
+        uint_t b[2 * N] = {0};
+        uint_t expected[2 * N] = {0};
+        uint_t actual[2 * N] = {0};
         
         res = parse_uint(iter, p, N);
         assert(res > 0);
@@ -124,17 +140,20 @@ void test_mod_pow() {
         assert(res > 0);
         iter += res + 1; 
 
-        mod_pow(p, a, b, actual, N);
+        gfp_pow(p, a, b, actual, N);
         assert(uint_cmp(expected, actual, N) == 0);
     }
 }
 
-void test_mod_inv() {
+void test_gfp_inv() {
     char *str = file_read("tests/testdata/pow_inv.txt");
     char *iter = str;
     int res;
     while (*iter != 0) {
-        uint_t p[N], a[N], expected[N], actual[N];
+        uint_t p[2 * N] = {0};
+        uint_t a[2 * N] = {0};
+        uint_t expected[2 * N] = {0};
+        uint_t actual[2 * N] = {0};
         
         res = parse_uint(iter, p, N);
         assert(res > 0);
@@ -148,15 +167,38 @@ void test_mod_inv() {
         assert(res > 0);
         iter += res + 1; 
 
-        mod_inv(p, a, actual, N);
+        gfp_inv(p, a, actual, N);
+        assert(uint_cmp(expected, actual, N) == 0);
+    }
+}
+
+void test_barrett_r() {
+    char *str = file_read("tests/testdata/barrett.txt");
+    char *iter = str;
+    int res;
+    while (*iter != 0) {
+        uint_t p[N] = {0};
+        uint_t expected[N + 1] = {0};
+        uint_t actual[N + 1] = {0};
+        
+        res = parse_uint(iter, p, N);
+        assert(res > 0);
+        iter += res + 1; 
+
+        res = parse_uint(iter, expected, N + 1);
+        assert(res > 0);
+        iter += res + 1; 
+
+        barrett_r(p, actual, N);
         assert(uint_cmp(expected, actual, N) == 0);
     }
 }
 
 int main(void) {
-    test_mod_add();
-    test_mod_sub();
-    test_mod_mul();
-    test_mod_pow();
-    test_mod_inv();
+    test_gfp_add();
+    test_gfp_sub();
+    // test_gfp_mul();
+    // test_gfp_pow();
+    // test_gfp_inv();
+    test_barrett_r();
 }

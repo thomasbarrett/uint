@@ -118,6 +118,13 @@ def generate_mod_inv_tests(path, n):
             b = pow(a, p - 1, p)
             file.write(f"0x{p:064x} 0x{a:064x} 0x{b:064x}\n")
 
+def generate_barrett_tests(path, n):
+    with open(path, 'w', encoding='utf-8') as file:
+        for _ in range(n):
+            p = Crypto.Util.number.getPrime(256)
+            q = (1 << (2 * (p.bit_length() + 1))) // p 
+            file.write(f"0x{p:064x} 0x{q:072x}\n")
+
 if __name__ == "__main__":
     # generate_add_tests("tests/testdata/add.txt", 1000)
     # generate_sub_tests("tests/testdata/sub.txt", 1000)
@@ -131,4 +138,5 @@ if __name__ == "__main__":
     # generate_mod_sub_tests("tests/testdata/sub_mod.txt", 100)
     # generate_mod_mul_tests("tests/testdata/mul_mod.txt", 100)
     # generate_mod_pow_tests("tests/testdata/pow_mod.txt", 100)
-    generate_mod_inv_tests("tests/testdata/pow_inv.txt", 100)
+    # generate_mod_inv_tests("tests/testdata/pow_inv.txt", 100)
+    generate_barrett_tests("tests/testdata/barrett.txt", 100)

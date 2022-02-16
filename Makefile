@@ -1,5 +1,6 @@
 CC=clang
-CFLAGS = -std=c11 -Iinclude -Wall -g
+CFLAGS = -std=c11 -g -Wall -pedantic -Iinclude -Wall 
+
 SRC_FILES = $(wildcard src/*.c)  $(wildcard src/*/*.c)
 FILES = $(basename $(SRC_FILES:src/%=%))
 OBJ_FILES = $(addprefix obj/,$(FILES:=.o))
