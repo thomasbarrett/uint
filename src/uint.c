@@ -52,17 +52,17 @@ static void _uint_mul(const uint_t *a, uint_t b, uint_t *c, size_t n) {
     c[n] = carry;
 }
 
-void uint_mul(const uint_t *a, const uint_t *b, uint_t *c, size_t n) {
+void uint_mul(const uint_t *a, size_t n, const uint_t *b, size_t m, uint_t *c) {
     assert(n <= N_MAX);
     uint_t res[2 * N_MAX + 2] = {0};
     uint_t tmp[N_MAX + 2] = {0};
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < m; i++) {
         uint_t bi = b[i];
         memset(tmp, 0, sizeof(tmp));
         _uint_mul(a, bi, tmp, n);
         uint_add(res + i, tmp, res + i, n + 2);
     }
-    memcpy(c, res, 2 * n * sizeof(uint_t));
+    memcpy(c, res, (m + n) * sizeof(uint_t));
 }
 
 uint_t uint_get_bit(const uint_t *x, uint_t i, size_t n) {

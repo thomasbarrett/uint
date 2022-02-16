@@ -36,7 +36,7 @@ void run_uint_sub(void *aux) {
 }
 
 void run_uint_mul(void *aux) {
-    uint_mul(a1, a2, a3, N);
+    uint_mul(a1, N, a2, N, a3);
 }
 
 void run_uint_div(void *aux) {

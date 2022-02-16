@@ -101,7 +101,7 @@ void test_uint_mul() {
         assert(res > 0);
         iter += res + 1; 
 
-        uint_mul(a, b, actual, N);
+        uint_mul(a, N, b, N, actual);
         assert(uint_cmp(expected, actual, 2 * N) == 0);
     }
 }

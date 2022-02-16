@@ -84,7 +84,7 @@ void uint_sub(const uint_t *a, const uint_t *b, uint_t *c, size_t n);
  * @param c the result `a` + `b`
  * @param n the number of limbs in a and b
  */
-void uint_mul(const uint_t *a, const uint_t *b, uint_t *c, size_t n);
+void uint_mul(const uint_t *a, size_t n, const uint_t *b, size_t m, uint_t *c);
 
 /**
  * @brief Computes the integer division a / b and assigns the result to the

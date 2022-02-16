@@ -60,11 +60,11 @@ void gfp_sub(const gfp_t *gfp, const uint_t *a, const uint_t *b, uint_t *c, size
 
 void gfp_mul(const gfp_t *gfp, const uint_t *a, const uint_t *b, uint_t *c, size_t n) {
     uint_t x[2 * N_MAX] = {0};
-    uint_mul(a, b, x, n);
+    uint_mul(a, n, b, n, x);
     uint_t tmp[4 * N_MAX] = {0};
-    uint_mul(x, gfp->r, tmp, 2 * n);
-    uint_shr_limb(tmp, 2 * gfp->k, tmp, 4 * n);
-    uint_mul(tmp, gfp->p, tmp, 2 * n);
+    uint_mul(x, 2 * n, gfp->r, n + 1, tmp);
+    uint_shr_limb(tmp, 2 * gfp->k, tmp, 3 * n + 1);
+    uint_mul(tmp, n, gfp->p, n, tmp);
     uint_sub(x, tmp, tmp, 2 * n);
     uint_t cmp = uint_cmp(tmp, gfp->p, n + 1) > 0;
     uint_t sub[N_MAX + 1] = {0};
