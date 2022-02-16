@@ -251,14 +251,14 @@ run_mod_inv: 14
 ```
 
 ```
-run_uint_cmp: 61122077
-run_uint_add: 85986328
-run_uint_sub: 76625023
-run_uint_mul: 8760286
-run_uint_div: 157737
-run_gfp_add: 25711248 // 6.8x faster
-run_gfp_sub: 27008372 // 7.1x faster
-run_gfp_mul: 45468 // 6.2x faster
-run_gfp_pow: 82
-run_gfp_inv: 79
+run_uint_cmp: 66047167
+run_uint_add: 84560815
+run_uint_sub: 73864626
+run_uint_mul: 8522565
+run_uint_div: 163779
+run_gfp_add: 22312588
+run_gfp_sub: 20945116
+run_gfp_mul: 1018969
+run_gfp_pow: 2016
+run_gfp_inv: 2012
 ```

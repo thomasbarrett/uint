@@ -9,9 +9,13 @@
 #include <uint.h>
 
 typedef struct gfp {
-    uint_t p[2 * N];
-    uint_t r[2 * N];
+    uint_t k;
+    size_t n;
+    uint_t p[2 * N_MAX];
+    uint_t r[2 * N_MAX];
 } gfp_t;
+
+gfp_t gfp_init(const uint_t *p, size_t n);
 
 /**
  * @brief 
@@ -31,7 +35,7 @@ void barrett_r(const uint_t *p, uint_t *r, size_t n);
  * @param c the sum `a` + `b` mod `p`
  * @param n the number of limbs
  */
-void gfp_add(const uint_t *p, const uint_t *a, const uint_t *b, uint_t *c, size_t n);
+void gfp_add(const gfp_t *gfp, const uint_t *a, const uint_t *b, uint_t *c, size_t n);
 
 /**
  * @brief Computes `a` - `b` mod `p`.
@@ -42,7 +46,7 @@ void gfp_add(const uint_t *p, const uint_t *a, const uint_t *b, uint_t *c, size_
  * @param c the sum `a` - `b` mod `p`
  * @param n the number of limbs
  */
-void gfp_sub(const uint_t *p, const uint_t *a, const uint_t *b, uint_t *c, size_t n);
+void gfp_sub(const gfp_t *gfp, const uint_t *a, const uint_t *b, uint_t *c, size_t n);
 
 /**
  * @brief Computes `a` * `b` mod `p`.
@@ -53,9 +57,9 @@ void gfp_sub(const uint_t *p, const uint_t *a, const uint_t *b, uint_t *c, size_
  * @param c the sum `a` * `b` mod `p`
  * @param n the number of limbs
  */
-void gfp_mul(const uint_t *p, const uint_t *a, const uint_t *b, uint_t *c, size_t n);
+void gfp_mul(const gfp_t *gfp, const uint_t *a, const uint_t *b, uint_t *c, size_t n);
 
-void gfp_pow(const uint_t *p, const uint_t *a, const uint_t *b, uint_t *c, size_t n);
+void gfp_pow(const gfp_t *gfp, const uint_t *a, const uint_t *b, uint_t *c, size_t n);
 
 /**
  * @brief Computes the inverse of `a` mod `p`.
@@ -65,6 +69,6 @@ void gfp_pow(const uint_t *p, const uint_t *a, const uint_t *b, uint_t *c, size_
  * @param c the inverse of `a`
  * @param n the number of limbs
  */
-void gfp_inv(const uint_t *p, const uint_t *a, uint_t *b, size_t n);
+void gfp_inv(const gfp_t *gfp, const uint_t *a, uint_t *b, size_t n);
 
 #endif /* MOD_H */

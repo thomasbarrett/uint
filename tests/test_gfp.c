@@ -42,7 +42,8 @@ void test_gfp_add() {
         assert(res > 0);
         iter += res + 1; 
 
-        gfp_add(p, a, b, actual, N);
+        gfp_t gfp = gfp_init(p, N);
+        gfp_add(&gfp, a, b, actual, N);
         assert(uint_cmp(expected, actual, N) == 0);
     }
 }
@@ -75,7 +76,8 @@ void test_gfp_sub() {
         assert(res > 0);
         iter += res + 1; 
 
-        gfp_sub(p, a, b, actual, N);
+        gfp_t gfp = gfp_init(p, N);
+        gfp_sub(&gfp, a, b, actual, N);
         assert(uint_cmp(expected, actual, N) == 0);
     }
 }
@@ -95,6 +97,7 @@ void test_gfp_mul() {
         res = parse_uint(iter, p, N);
         assert(res > 0);
         iter += res + 1; 
+        gfp_t gfp = gfp_init(p, N);
 
         res = parse_uint(iter, a, N);
         assert(res > 0);
@@ -108,7 +111,7 @@ void test_gfp_mul() {
         assert(res > 0);
         iter += res + 1; 
 
-        gfp_mul(p, a, b, actual, N);
+        gfp_mul(&gfp, a, b, actual, N);
         assert(uint_cmp(expected, actual, N) == 0);
     }
 }
@@ -140,7 +143,8 @@ void test_gfp_pow() {
         assert(res > 0);
         iter += res + 1; 
 
-        gfp_pow(p, a, b, actual, N);
+        gfp_t gfp = gfp_init(p, N);
+        gfp_pow(&gfp, a, b, actual, N);
         assert(uint_cmp(expected, actual, N) == 0);
     }
 }
@@ -167,7 +171,8 @@ void test_gfp_inv() {
         assert(res > 0);
         iter += res + 1; 
 
-        gfp_inv(p, a, actual, N);
+        gfp_t gfp = gfp_init(p, N);
+        gfp_inv(&gfp, a, actual, N);
         assert(uint_cmp(expected, actual, N) == 0);
     }
 }
