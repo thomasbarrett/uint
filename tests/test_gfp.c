@@ -197,8 +197,8 @@ void test_barrett_r() {
 int main(void) {
     test_gfp_add();
     test_gfp_sub();
-    // test_gfp_mul();
-    // test_gfp_pow();
-    // test_gfp_inv();
+    test_gfp_mul();
+    test_gfp_pow();
+    test_gfp_inv();
     test_barrett_r();
 }

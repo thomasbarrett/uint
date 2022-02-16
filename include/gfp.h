@@ -20,7 +20,7 @@ typedef struct gfp {
  * @param r The result of size n + 1
  * @param n The number of limbs
  */
-void barrett_r(uint_t *p, uint_t *r, size_t n);
+void barrett_r(const uint_t *p, uint_t *r, size_t n);
 
 /**
  * @brief Computes `a` + `b` mod `p`.

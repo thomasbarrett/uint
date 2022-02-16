@@ -122,7 +122,7 @@ def generate_barrett_tests(path, n):
     with open(path, 'w', encoding='utf-8') as file:
         for _ in range(n):
             p = Crypto.Util.number.getPrime(256)
-            q = (1 << (2 * (p.bit_length() + 1))) // p 
+            q = (1 << (2 * p.bit_length())) // p 
             file.write(f"0x{p:064x} 0x{q:072x}\n")
 
 if __name__ == "__main__":
@@ -139,4 +139,4 @@ if __name__ == "__main__":
     # generate_mod_mul_tests("tests/testdata/mul_mod.txt", 100)
     # generate_mod_pow_tests("tests/testdata/pow_mod.txt", 100)
     # generate_mod_inv_tests("tests/testdata/pow_inv.txt", 100)
-    generate_barrett_tests("tests/testdata/barrett.txt", 100)
+    generate_barrett_tests("tests/testdata/barrett.txt", 1000)
