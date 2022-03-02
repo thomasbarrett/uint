@@ -292,3 +292,6 @@ pk1: afafb6396efd9d754ac6d5dc0130f98cb965ab437aba1198b20ea1e5f5d47128
 enter pk2: cd92df39b14960b85df9e9f10434f38edd1e2d06d9f4eefb4f9ecb62544b666a
 secret: df3096fde88e624eddaa78efeb206c71dbbe8db22c6fefe7f71aca0ffc022667
 ```
+
+The most recent benchmark indicates that we can perform 432 scalar multiplications
+per second on the x25519 curve. This is about 70% faster than the x25519 implementation.
