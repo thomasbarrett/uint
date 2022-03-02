@@ -263,8 +263,9 @@ The x25519.c file implements an example use case of this library: an elliptic cu
 diffie-hellman key exchange algorithm. The x25519 library implements Curve25519
 elliptic curve group with constant time addition and scalar multiplication group
 operations. The scalar multiplication operation is implemented using a montgomery
-ladder with a differential addition chain. The explanation of this approach can be
-found in [here](https://martin.kleppmann.com/papers/curve25519.pdf).
+ladder with a differential addition chain. The explanation and mathematic derivation
+of this approach can be found [here](https://martin.kleppmann.com/papers/curve25519.pdf).
+[This](https://pypi.org/project/x25519/) python implementation used to test correctness.
 
 I have implemented a simple example program that can be used to test the key exchange.
 ```
