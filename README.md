@@ -230,11 +230,6 @@ This is a basic fact from algebra. This is a pretty slow operation... it
 may be possible to make faster using a constant-time variant of the gcd
 algorithm, such as the one found [here](https://gcd.cr.yp.to/safegcd-20190413.pdf)
 
-# Optional Extension
-A possible extension that would use this library is an implementation 
-of the Diffie-Hellman key exchange using the Curve25519 group. This is
-the default key exchange protocol in TLS 1.3.
-
 # Benchmark:
 The benchmark results before optimization.
 ```
@@ -261,4 +256,38 @@ run_gfp_sub: 24221503 // 6.3x
 run_gfp_mul: 1922255 // 265.3x
 run_gfp_pow: 3962 // 283x
 run_gfp_inv: 3939 // 281x
+```
+
+# Example Usage
+The x25519.c file implements an example use case of this library: an elliptic curve
+diffie-hellman key exchange algorithm. The x25519 library implements Curve25519
+elliptic curve group with constant time addition and scalar multiplication group
+operations. The scalar multiplication operation is implemented using a montgomery
+ladder with a differential addition chain. The explanation of this approach can be
+found in [here](https://martin.kleppmann.com/papers/curve25519.pdf).
+
+I have implemented a simple example program that can be used to test the key exchange.
+```
+make
+./bin/example
+```
+
+This will generate a private key by reading 32 bytes from `/dev/random` and calculate
+the public key sG where G is the x25519 base point (9, 1) using the x25519 scalar
+multiplication implementation. Example output is shown below:
+```
+sk1: 782e5be7867e3e820f41bfe68449afc70c37c1896fb6df8af61747d89fd81fe5
+pk1: 1b82a443f14abebbcb0c4276ddfcf7ee1067a67fa45c26e866346736b8b96536
+enter pk2: 
+```
+
+Another user can also run the `/bin/example` executable and generate their own key pair.
+Both users and share and input each others public keys. They should both get the same
+shared secret. Example output is shown below:
+
+```
+sk1: 679ee974efd58b50bd56cd8d59adab54114c91fdf650119f974664eb9660b251
+pk1: afafb6396efd9d754ac6d5dc0130f98cb965ab437aba1198b20ea1e5f5d47128
+enter pk2: cd92df39b14960b85df9e9f10434f38edd1e2d06d9f4eefb4f9ecb62544b666a
+secret: df3096fde88e624eddaa78efeb206c71dbbe8db22c6fefe7f71aca0ffc022667
 ```
