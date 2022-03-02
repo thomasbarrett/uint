@@ -2,6 +2,7 @@
 #include <gfp.h>
 #include <string.h>
 #include <uint.h>
+#include <assert.h>
 
 gfp_t curve25519;
 
@@ -84,7 +85,8 @@ void x25519_scalar_mult(uint_t *s, x25519_element_t *e, uint_t *res) {
     x25519_double(&one, &two);
     x25519_element_t pm = one;
     x25519_element_t pm1 = two;
- 
+    assert(uint_get_bit(s, 255, N) == 0);
+    assert(uint_get_bit(s, 254, N) == 1);
     for (int i = 253; i >= 0; i--) {
         uint_t b = uint_get_bit(s, i, N);
         x25519_element_t a = {0};
