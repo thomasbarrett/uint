@@ -251,14 +251,14 @@ run_mod_inv: 14
 ```
 
 ```
-run_uint_cmp: 66705133
-run_uint_add: 79844320
-run_uint_sub: 72368027
-run_uint_mul: 8601356
-run_uint_div: 162563
-run_gfp_add: 23406476
-run_gfp_sub: 24221503
-run_gfp_mul: 1922255
-run_gfp_pow: 3962
-run_gfp_inv: 3939
+run_uint_cmp: 66705133 // 3.4x
+run_uint_add: 79844320 // 3.1x
+run_uint_sub: 72368027 // 3.3x
+run_uint_mul: 8601356 // 5.7x
+run_uint_div: 162563 // 6.0x
+run_gfp_add: 23406476 // 6.2x
+run_gfp_sub: 24221503 // 6.3x
+run_gfp_mul: 1922255 // 265.3x
+run_gfp_pow: 3962 // 283x
+run_gfp_inv: 3939 // 281x
 ```

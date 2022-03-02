@@ -150,7 +150,7 @@ void test_gfp_pow() {
 }
 
 void test_gfp_inv() {
-    char *str = file_read("tests/testdata/pow_inv.txt");
+    char *str = file_read("tests/testdata/inv_mod.txt");
     char *iter = str;
     int res;
     while (*iter != 0) {

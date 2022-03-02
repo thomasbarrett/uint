@@ -69,6 +69,7 @@ void gfp_mul(const gfp_t *gfp, const uint_t *a, const uint_t *b, uint_t *c, size
     uint_t cmp = uint_cmp(tmp, gfp->p, n + 1) > 0;
     uint_t sub[N_MAX + 1] = {0};
     uint_select_zero(gfp->p, cmp, sub, n);
+    memset(c, 0, 2 * n * sizeof(uint_t));
     uint_sub(tmp, sub, c, n + 1);
 }
 
@@ -89,9 +90,9 @@ void gfp_pow(const gfp_t *gfp, const uint_t *a, const uint_t *b, uint_t *c, size
 }
 
 void gfp_inv(const gfp_t *gfp, const uint_t *a, uint_t *b, size_t n) {
-    uint_t one[2 * N_MAX] = {0};
-    one[0] = 1U;
+    uint_t two[2 * N_MAX] = {0};
+    two[0] = 2U;
     uint_t pow[2 * N_MAX];
-    uint_sub(gfp->p, one, pow, n);
+    uint_sub(gfp->p, two, pow, n);
     gfp_pow(gfp, a, pow, b, n);
 }

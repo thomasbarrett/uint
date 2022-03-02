@@ -2,6 +2,7 @@
 #include <uint.h>
 #include <gfp.h>
 #include <stdio.h>
+#include <x25519.h>
 
 #define STRINGIFY(x) #x
 #define BENCHMARK(func, aux, batch) benchmark(STRINGIFY(func), func, aux, batch)
@@ -63,6 +64,16 @@ void run_gfp_inv(void *aux) {
     gfp_inv((gfp_t*) aux, a1, a2, N);
 }
 
+uint_t scalar[N];
+
+void run_x25519_mul(void *aux) {
+    uint_t res[2 * N] = {0};
+    x25519_element_t base = {0};
+    base.x[0] = 9;
+    base.z[0] = 1;
+    x25519_scalar_mult(scalar, &base, res);
+}
+
 int main(void) {
     must_parse_uint("0x8c307598fd51fb732b33dddb02ddc885d3b78759d6b1c165b39bba8df4a5a691", q, N);
     must_parse_uint("0x6409b613c5e7c7e927f9d2c41b56af5ea49ec28277c71eb12223a2cff01135d7", a1, N);
@@ -78,4 +89,7 @@ int main(void) {
     BENCHMARK(run_gfp_mul, &gfp, 100);
     BENCHMARK(run_gfp_pow, &gfp, 10);
     BENCHMARK(run_gfp_inv, &gfp, 10);
+    x25519_init();
+    must_parse_uint("0x4000000000000000000000000000000000000000000000000000000000000001", scalar, N);
+    BENCHMARK(run_x25519_mul, NULL, 10);
 }
