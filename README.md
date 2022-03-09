@@ -208,9 +208,12 @@ Given two N digit numbers a and b and prime q:
 ```
 
 ## Multiplication
-Since the result of multiplication is far larger than `p`, we implement
-modular multiplication using the following algorithm. Since big integer
-division is used, this operation is slower than big integer division.
+The naiive implementation for modular multiplication can be simply defined 
+using a single multiplication and division operation. Since our library
+benchmarks suggest that integer division is around 50x slower than
+multiplication the vast majority of computation is spent performing the divison
+operation. The pseudo-code for the naiive algorithm is given below.
+
 ```
 Given two N digit numbers a and b and prime p:
     declare q[N], r[N]
@@ -218,6 +221,18 @@ Given two N digit numbers a and b and prime p:
     (q[N], r[N]) = (c / p, c % p) 
     return r
 ```
+
+We implement accelerated modular multiplication using what is known as
+the [Barrett reduction algorithm](https://www.nayuki.io/page/barrett-reduction-algorithm).
+The intuition for this algorithm is that for any prime `p`, we can compute
+`r = 1 / p` and from then on, for any `x := a * b` simply compute 
+`x mod p = x - floor(x / p) * p = x - floor(x * r) * p =` using only
+multiplication and subtraction. However, when implementing this with
+integer operations, the value `r := 1 / p` would be floored to `0` and
+the result would be inaccurate. To correct for this, we can
+choose some large value `K` such that if `r := K / p` then
+`floor(x * r / K) = floor(x / p)`. The trick is that we can choose K to be
+a power of two `2^k` so that `floor(x * r / K) = x * r >> k`. 
 
 ## Exponentiation
 We implement modular multiplication use exponentiation by squaring. 
