@@ -1,4 +1,63 @@
-# uint
+## Introduction
+Constant time big integer operations are the bedrock of the modern cryptography
+stack. Cryptographic primitives such as key exchange protocols, signatures, and
+public key encryption schemes often operate on integers that are far larger than
+the native word size. Thus, fundamental operations such as addition, subtraction,
+multiplication, division, and comparison cannot be performed by a single machine
+instruction.
+
+The big integer library used to implement cryptographic primitives can introduce
+serious vulnerabilities into the encryption scheme by the means of side channel
+attacks.
+
+## Side Channel Attacks
+A side channel attack occurs when a computer "leaks" more information than it is
+supposed to about the code that it is running. It is not considered a "hack" or
+system "vulnerability" in the normal sense of a word. Even the most theoretically
+secure algorithm can be broken by careful analysis of so called "side-channels".
+Here, we outline a few potential side channels.
+
+### Timing Side Channel
+The idea of a time side-channel is quite simple. If an attacker has the means to 
+measure the time that a function takes to execute, they can learn information
+about the arguments to that function. In a cryptosystem, this is dangerous because
+any knowledge about a "secret" value can reduce the security of the system enough
+that it can be brute force computed.
+
+Imagine a naiive algorithm that checks whether or not a user enter password is
+correct by comparing each character of the user inputing password with the actual
+password and failing as soon as a character does not match. An incorrect password
+with 1 correct digit will take longer to fail than an incorrect password without
+any correct digits. An attacker can use this principal to guess the password in
+exponentially less time than with a brute force attack.
+
+When communicating over a network, you may think that such a miniscule timing
+differences cannot possibly be used to guess a password. However, given enough
+guesses, researched have shown that the variance introduced by the network can
+be reduced enough that a clear timing signal can be found.
+
+## Cache Side Channel
+A cache attack extracts information about the secret arguments to a cryptographic
+function by measuring data dependent memory access patterns. This can be measured
+from another process running on the same machine by analyzing cache hit/miss metrics.
+For example, if a cryptographic function reads two values A and B depending on the
+value of a secret bit C, then an attacker can obtain knowledge about the system by
+reading many random values from memory to "flush" the cache. After the cryptographic
+function runs, the attacker could determine whether just one or both of A and B
+were read by the cryptographic function to obtain information on C. This can be 
+enough to break the security of a cryptosystem and guess the secret value.
+
+While the possibility of a cache-timing attack may seem unlikely, it is made more
+realistic by the rise of multi-tenant cloud computation machines. Even though
+individual customers run their code on sand-boxed virtual machines, there often
+is not enough seperation between virtual machines to prevent a cache timing attack.
+If two virtual machines run using a virtual CPU backed by the same physical CPU,
+then the memory access patterns of one VM would affect the shared memory cache,
+which the other virtual machine could detect. This makes cache timing attacks
+much more feasible in the real world.
+
+## Implementation
+
 The uint library implements constant-time arithmetic operations for arbitrary
 length unsigned integers suitable for usage in a cryptography library. The
 following operations are supported.
