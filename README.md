@@ -56,6 +56,43 @@ then the memory access patterns of one VM would affect the shared memory cache,
 which the other virtual machine could detect. This makes cache timing attacks
 much more feasible in the real world.
 
+## Constant Time Implementation
+The standard way to avoid leaking side-channel information is by using a constant
+time implementation. This means that all integer and modular integer operations
+run in the same amount of time and access the exact same memory independent of
+arguemnt. 
+
+A constant-time function in the cryptographic sense is not quite the same as the
+standard definition. Cryptographic algorithms often operation on integers of a
+fixed maximum size. For example, the RSA algorithm operates with 1024, 2048, or 
+4096 bit integers. A cryptographic constant-time function takes the same amount
+of time to operate on any input with a length upper-bounded by k. 
+
+A constant-time function must also avoid using any conditional statements. Any
+conditional statement is not constant time because each branch of the conditional
+statement will either use different instructions or access different memory
+addresses. The standard way to implement a conditional statement in constant time
+is to simply evaluate both branches of the conditinal statement independent of
+the value of the condition and doing a constant time "select" operation to choose
+the intended result.
+
+A constant time select is the standard way of implementing a conditional expression.
+Given two values Y and Z and a boolean condition B, the SELECT function returns a 
+third value B ? Y: Z. Unlike the ternary operator the SELECT function runs in
+constant time. This is implemented using the bitwise expression 
+`(~(B - 1) & Y) | ((B - 1) & Z)`. Note that this can be extended to Y and Z values
+greater than one word size by applying the expression to each word of Y and Z.
+Note that if `B = 1` than `B - 1 = 0` and `~(B - 1) = 0xFFFFFFFF`. If `B = 0` than
+`B - 1 = 0xFFFFFFFF` and `~(B - 1) = 0`.
+
+There are other platform specific hurdles that come into play when implenting 
+constant time integer operations. In certain older platforms, shifts, rotations,
+and multiplication are not constant time operations. However, in nearly all
+modern CPUs and platforms, they are safe to use. Integer division is not a
+constant time operation even in modern CPUs as smaller divisors often result
+in a faster code path. In all CPUs conditional jumps dependent on the non-constant
+inputs also result in code that is not constant time.
+
 ## Implementation
 
 The uint library implements constant-time arithmetic operations for arbitrary
@@ -82,7 +119,7 @@ arithmetic operations modulo a prime.
 - mod_inv
 
 # Integer Representation and Precision Restrictions
-The uint library implements arbitrary length integers as arrays of uint32_t,
+The uint library implements arbitrary length integers as arrays of `uint32_t` types,
 where each integer represents a single "digit" in a base 2^32 number system.
 This is effectively a little-endian representation. Thus, only integers that
 are a multiple of 64-bits are supported. This is sufficient since most cryptographic
@@ -94,34 +131,11 @@ a * (2^32)^0 + b * (2^32)^1 + c * (2^32)^2 + d * (2^32)^3
 uint64_t n[4] = {a, b, c, d};
 ```
 
-# Constant Time Guarentees
-One important source of weakness in the implementation of cryptographic
-algorithms is side-channel attacks. Time is a common side channel. For
-example, imagine a scenario in which a server holds a private key and
-signs all messages sent to it so that any third party could verify its
-authenticity with the servers public key. After sending enough messages
-to the server, and timing how long the server took to respond, an attacker
-could potentially learn information about the private key itself. If enough
-information is revealed, an attacker could brute force compute the server's
-private key, breaking the cryptosystem.
+We choose to use a little-endian implementation so that zero-extending a big integer
+buffer results in a number that is numerically equivalent to the original buffer but
+with additional more significant digits that are zero. This simplifies and optimizes
+the implementation logic.
 
-To mitigate side channel attacks in all (theoretical) cryptographic
-implementations based on this library, all integer operations are
-constant time with respect to their inputs and some fixed length k.
-For example, computing 64 / 37 will take the same amount of time as
-computing 64 / 1.
-
-Ensuring constant time guarentees is a platform specific progress
-as detailed [here](https://www.bearssl.org/constanttime.html). In certain
-older platforms, shifts, rotations, and multiplication are not constant
-time operations. However, in nearly all modern CPUs and platforms, they
-are safe to use. Integer division is not a constant time operation even
-in modern CPUs as smaller divisors often result in a faster code path.
-In all CPUs conditional jumps dependent on the non-constant inputs also
-result in code that is not constant time. All operations must be written
-without the use of conditional jumps.
-
-# Implementation
 ## Multiplication
 For multiplication, we implement the 'schoolbook' long multiplication
 algorithm. Here, we show three possible implementations of the algorithm
