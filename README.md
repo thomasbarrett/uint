@@ -136,10 +136,11 @@ buffer results in a number that is numerically equivalent to the original buffer
 with additional more significant digits that are zero. This simplifies and optimizes
 the implementation logic.
 
-## Multiplication
-For multiplication, we implement the 'schoolbook' long multiplication
-algorithm. Here, we show three possible implementations of the algorithm
-that reduce the number of addq and mulq operations used by optimizing
+## Optimization Details
+Here, we use multiplication as an example to demonstrate how constant time integer
+operations can be implemented and optimized. For multiplication, we implement the 
+'schoolbook' long multiplication algorithm. Here, we show three possible implementations
+of the algorithm that reduce the number of addq and mulq operations used by optimizing
 away unnecessary operations. Mainly, we can reduce the number of unnecessary
 `addq` operations by minimizing which digits of the intermediate product
 we add to the result. 
@@ -188,51 +189,6 @@ Given two N digit numbers a and b:
         res[i:i+N+2] += tmp[0:N+2]     (2 * N + 4 add, 0 mul)
     Return res
 ```
-
-## Division
-The division operation is implemented with binary long division. While this
-is not the fastest available division algorithm, it is the easiest that I have
-found that can be easily translated into constant time operations. The pseudocode
-for the binary long division algorithm can be found [here](https://en.wikipedia.org/wiki/Division_algorithm#Long_division).
-
-### Constant Time Value Selection
-There is a conditional subtraction in the binary division operation. This
-is not constant time:
-```
-if R >= D then
-    R := R − D
-    Q(i) := 1
-end
-```
-This can be modified to the better constant time construct. Explanation of
-the strange construct can be found [here](https://crypto.stackexchange.com/questions/96614/how-can-i-understand-whether-my-c-implementation-is-constant-time-or-not-i-e-r)
-```
-B = R >= D
-R := R - (~(B - 1) & D)
-Q(i) := B
-```
-Note that one may be tempted to write the following using a condition move instruction. This is not constant time since the D and ZERO variables are
-stored in different locations in memory (and thus will be accessed on different cache lines). This opens up the algorithm to a cache-timing attack
-vulnerability.
-```
-ZERO := 0
-B = R >= D
-R := R - (B ? D: ZERO)
-Q(i) := B
-```
-### Constant Time Bit Access
-In order to implement the binary long divison algorithm above, we need a constant
-time way to access bits. The naiive way to access the `i`th bit of `a` is the following:
-
-```c
-    uint_t wi = i / 32;
-    uint_t bi = i % 32;
-    return (a[wi] >> bi) & 0x1U
-```
-
-This implementation is problematic because the x64 division and modulo instructions are
-not actually constant time. Instead, we can explicitly use the left and right shift
-operators to compute the word and bit indices.
 
 # Fast Modular Operations
 Modular addition and subtract can all be trivially implemented with an
@@ -319,31 +275,20 @@ may be possible to make faster using a constant-time variant of the gcd
 algorithm, such as the one found [here](https://gcd.cr.yp.to/safegcd-20190413.pdf)
 
 # Benchmark:
-The benchmark results before optimization.
+A simple benchmark system was implemented in order to measure the performance of 
+these operations. The final benchmark results are shown below, measured in operations
+per second.
 ```
-run_uint_cmp: 19150804
-run_uint_add: 25506648
-run_uint_sub: 21707278
-run_uint_mul: 1511724
-run_uint_div: 26801
-run_mod_add: 3765058
-run_mod_sub: 3807269
-run_mod_mul: 7245
-run_mod_pow: 14
-run_mod_inv: 14
-```
-
-```
-run_uint_cmp: 66705133 // 3.4x
-run_uint_add: 79844320 // 3.1x
-run_uint_sub: 72368027 // 3.3x
-run_uint_mul: 8601356 // 5.7x
-run_uint_div: 162563 // 6.0x
-run_gfp_add: 23406476 // 6.2x
-run_gfp_sub: 24221503 // 6.3x
-run_gfp_mul: 1922255 // 265.3x
-run_gfp_pow: 3962 // 283x
-run_gfp_inv: 3939 // 281x
+run_uint_cmp: 66705133
+run_uint_add: 79844320
+run_uint_sub: 72368027
+run_uint_mul: 8601356
+run_uint_div: 162563
+run_gfp_add: 23406476
+run_gfp_sub: 24221503
+run_gfp_mul: 1922255
+run_gfp_pow: 3962
+run_gfp_inv: 3939
 ```
 
 # Example Usage
@@ -383,3 +328,9 @@ secret: df3096fde88e624eddaa78efeb206c71dbbe8db22c6fefe7f71aca0ffc022667
 
 The most recent benchmark indicates that we can perform 432 scalar multiplications
 per second on the x25519 curve. This is about 70% faster than the x25519 implementation.
+
+# Conclusion
+This big integer library achieves usable performance for implementation of cryptographic 
+operations. Future work may include comparing this library to comparable constant time
+big integer libraries or an assembly level analysis of the compiled output to ensure
+that no compiler optimizations are breaking the constant-time properties of the algorithms.
