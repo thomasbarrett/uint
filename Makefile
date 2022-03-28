@@ -4,7 +4,7 @@ SRC_FILES = $(wildcard src/*.c)  $(wildcard src/*/*.c)
 FILES = $(basename $(SRC_FILES:src/%=%))
 OBJ_FILES = $(addprefix obj/,$(FILES:=.o))
 TEST_FILES = $(join $(dir $(addprefix bin/tests/,$(FILES))), $(addprefix test_,$(notdir $(FILES))))
-VERSION = 0.1.0
+VERSION = v0.1.0
 
 .PHONY: all
 all: bin/benchmark bin/example $(TESTS)
@@ -36,6 +36,10 @@ bin/example: main/example.c $(OBJ_FILES)
 # suppress error for missing test file
 bin/tests/%:
 	@:
+
+.PHONY: object-files
+object-files:
+	@echo $(OBJ_FILES)
 
 .PHONY: test
 test: $(TEST_FILES)
